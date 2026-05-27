@@ -1,28 +1,26 @@
-import ContentContainer from "@/components/ContentContainer";
-import { StyledButton } from "@/components/StyledButton";
+import { StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Header } from "@/components/Header";
+import { StyledText } from "@/components/StyledText";
+import { useInvertColors } from "@/contexts/InvertColorsContext";
+import { n } from "@/utils/scaling";
 
-const buttons = [
-  { id: "1", text: "Test Button long one because I want to test a long button 1" },
-  { id: "2", text: "Test Button 2" },
-  { id: "3", text: "Test Button 3" },
-  { id: "4", text: "Test Button 4" },
-  { id: "5", text: "Test Button 5" },
-  { id: "6", text: "Test Button 6" },
-  { id: "7", text: "Test Button 7" },
-  { id: "8", text: "Test Button 8" },
-  { id: "9", text: "Test Button 9" },
-  { id: "10", text: "Test Button 10" },
-];
+export default function LogScreen() {
+  const { invertColors } = useInvertColors();
+  const bg = invertColors ? "white" : "black";
 
-export default function Tab() {
   return (
-    <ContentContainer
-      headerTitle="Liked Songs"
-      hideBackButton
-    >
-      {buttons.map((button) => (
-        <StyledButton key={button.id} text={button.text} />
-      ))}
-    </ContentContainer>
+    <SafeAreaView edges={["top"]} style={[styles.container, { backgroundColor: bg }]}>
+      <Header headerTitle="Nourish" hideBackButton />
+      <View style={styles.empty}>
+        <StyledText style={styles.emptyText}>no entries yet</StyledText>
+      </View>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  empty: { flex: 1, alignItems: "center", justifyContent: "center" },
+  emptyText: { fontSize: n(20), opacity: 0.4 },
+});
