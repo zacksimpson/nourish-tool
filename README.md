@@ -4,9 +4,9 @@
 
 A mindfulness-first daily check-in tool for the Light Phone III.
 
-Nourish is not a calorie tracker. It's a lightweight daily log for people who want to be more intentional about what they eat — connecting eating habits with context like stress, sleep, and how the day went. Built to be used once a day, in under a minute.
+Nourish is not a calorie tracker. It's a lightweight daily log for people who want to be more intentional about what they eat – connecting eating habits with context like stress, sleep, and how the day went. Built to be used once a day, in under a minute.
 
-Built with [vandamd's light-template](https://github.com/vandamd/light-template) — a community-made Expo template for building LightOS-style apps for the Light Phone III.
+Built with [vandamd's light-template](https://github.com/vandamd/light-template) – a community-made Expo template for building LightOS-style apps for the Light Phone III.
 
 ---
 
