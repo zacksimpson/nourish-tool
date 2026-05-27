@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "appname",
-    "slug": "appname",
-    "version": "1.0.0",
+    "name": "Nourish",
+    "slug": "nourish-tool",
+    "version": "0.0.1",
     "orientation": "portrait",
     "scheme": "appname",
     "icon": "./assets/images/icon.png",
     "android": {
       "backgroundColor": "#000000",
-      "package": "com.vandam.appname"
+      "package": "com.zacksimpson.nourish"
     },
     "plugins": [
       "expo-router",
