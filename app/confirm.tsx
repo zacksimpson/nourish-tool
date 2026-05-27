@@ -1,5 +1,6 @@
 import { type Href, router, useLocalSearchParams } from "expo-router";
 import { StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { HapticPressable } from "@/components/HapticPressable";
 import { Header } from "@/components/Header";
 import { StyledText } from "@/components/StyledText";
@@ -17,9 +18,19 @@ export default function ConfirmScreen() {
     returnPath: string;
   }>();
 
+  const bg = invertColors ? "white" : "black";
+  const textColor = invertColors ? "black" : "white";
+
   const handleConfirm = () => {
-    const path = params.returnPath || "/(tabs)/settings";
-    router.navigate(`${path}?confirmed=true&action=${encodeURIComponent(params.action ?? '')}` as Href);
+    const path = (params.returnPath || "/(tabs)/") as Href;
+    router.dismissTo({
+      pathname: path,
+      params: {
+        confirmed: "true",
+        action: params.action ?? "",
+      },
+      // biome-ignore lint/suspicious/noExplicitAny: expo-router dismissTo with dynamic pathname requires any
+    } as any);
   };
 
   const handleBack = () => {
@@ -28,53 +39,48 @@ export default function ConfirmScreen() {
     }
   };
 
-  const textColor = invertColors ? "black" : "white";
-
   return (
     <SwipeBackContainer enabled onSwipeBack={handleBack}>
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: invertColors ? "white" : "black" },
-        ]}
+      <SafeAreaView
+        edges={["top"]}
+        style={[styles.container, { backgroundColor: bg }]}
       >
-        <Header headerTitle={params.title || "Confirm"} />
-        <View style={styles.content}>
+        <Header />
+
+        <View style={styles.messageContainer}>
           <StyledText style={styles.messageText}>{params.message}</StyledText>
-          <View style={styles.spacer} />
-          <HapticPressable onPress={handleConfirm} style={styles.button}>
-            <StyledText style={[styles.buttonText, { color: textColor }]}>
-              {params.confirmText || "Confirm"}
-            </StyledText>
-          </HapticPressable>
         </View>
-      </View>
+
+        <HapticPressable onPress={handleConfirm} style={styles.confirmBtn}>
+          <StyledText style={[styles.confirmText, { color: textColor }]}>
+            {(params.confirmText || "Confirm").toUpperCase()}
+          </StyledText>
+        </HapticPressable>
+      </SafeAreaView>
     </SwipeBackContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  container: { flex: 1 },
+  messageContainer: {
     flex: 1,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: n(37),
-    paddingTop: n(20),
-    paddingBottom: n(20),
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingTop: n(80),
+    paddingHorizontal: n(40),
   },
   messageText: {
-    fontSize: n(18),
+    fontSize: n(22),
+    textAlign: "center",
+    lineHeight: n(32),
   },
-  spacer: {
-    flex: 1,
-  },
-  button: {
+  confirmBtn: {
     alignItems: "center",
-    minWidth: n(200),
+    paddingBottom: n(28),
   },
-  buttonText: {
-    fontSize: n(40),
-    textTransform: "uppercase",
+  confirmText: {
+    fontSize: n(24),
+    letterSpacing: n(5),
   },
 });

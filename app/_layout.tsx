@@ -1,14 +1,24 @@
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
 import { StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   InvertColorsProvider,
   useInvertColors,
 } from "@/contexts/InvertColorsContext";
-import { OptionExampleProvider } from "@/contexts/OptionExampleContext";
+
+// biome-ignore lint/performance/noNamespaceImport: expo-splash-screen is designed for namespace usage
+SplashScreen.preventAutoHideAsync();
 
 function RootLayout() {
-  const { invertColors } = useInvertColors();
+  const { invertColors, loaded } = useInvertColors();
+
+  useEffect(() => {
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
 
   return (
     <Stack
@@ -27,10 +37,8 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <InvertColorsProvider>
-        <OptionExampleProvider>
-          <StatusBar hidden />
-          <RootLayout />
-        </OptionExampleProvider>
+        <StatusBar hidden />
+        <RootLayout />
       </InvertColorsProvider>
     </GestureHandlerRootView>
   );

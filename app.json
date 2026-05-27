@@ -4,7 +4,7 @@
     "slug": "nourish-tool",
     "version": "0.0.1",
     "orientation": "portrait",
-    "scheme": "appname",
+    "scheme": "nourish",
     "icon": "./assets/images/icon.png",
     "android": {
       "backgroundColor": "#000000",
