@@ -1,4 +1,5 @@
-import { router, Stack } from "expo-router";
+import { Stack } from "expo-router";
+// biome-ignore lint/performance/noNamespaceImport: expo-splash-screen is designed for namespace usage
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { StatusBar } from "react-native";
@@ -7,8 +8,8 @@ import {
   InvertColorsProvider,
   useInvertColors,
 } from "@/contexts/InvertColorsContext";
+import { NourishProvider } from "@/contexts/NourishContext";
 
-// biome-ignore lint/performance/noNamespaceImport: expo-splash-screen is designed for namespace usage
 SplashScreen.preventAutoHideAsync();
 
 function RootLayout() {
@@ -37,8 +38,10 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <InvertColorsProvider>
-        <StatusBar hidden />
-        <RootLayout />
+        <NourishProvider>
+          <StatusBar hidden />
+          <RootLayout />
+        </NourishProvider>
       </InvertColorsProvider>
     </GestureHandlerRootView>
   );

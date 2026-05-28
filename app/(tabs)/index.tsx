@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { router } from "expo-router";
+import { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Keyboard,
@@ -10,10 +11,12 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { DatePicker } from "@/components/DatePicker";
 import { HapticPressable } from "@/components/HapticPressable";
 import { Header } from "@/components/Header";
 import { StyledText } from "@/components/StyledText";
 import { useInvertColors } from "@/contexts/InvertColorsContext";
+import { SIGNAL_OPTIONS, useNourish } from "@/contexts/NourishContext";
 import {
   scrollIndicatorBaseStyles,
   useScrollIndicator,
@@ -51,6 +54,11 @@ export default function LogScreen() {
   const dimColor = invertColors ? "#AAAAAA" : "#555555";
   const dividerColor = invertColors ? "#DDDDDD" : "#1A1A1A";
 
+  const { entries, signals: enabledSignals, saveEntry, loaded } = useNourish();
+
+  const todayRef = useRef(new Date().toISOString().slice(0, 10));
+  const today = todayRef.current;
+
   const {
     handleScroll,
     scrollIndicatorHeight,
@@ -59,23 +67,66 @@ export default function LogScreen() {
     setScrollViewHeight,
   } = useScrollIndicator();
 
-  // Meal log
+  // Date picker modal state
+  const [pickerVisible, setPickerVisible] = useState(false);
+  const [viewYear, setViewYear] = useState(() => new Date().getFullYear());
+  const [viewMonth, setViewMonth] = useState(() => new Date().getMonth());
+
+  const handlePrevMonth = () => {
+    if (viewMonth === 0) {
+      setViewYear((y) => y - 1);
+      setViewMonth(11);
+    } else {
+      setViewMonth((m) => m - 1);
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (viewMonth === 11) {
+      setViewYear((y) => y + 1);
+      setViewMonth(0);
+    } else {
+      setViewMonth((m) => m + 1);
+    }
+  };
+
+  const handleSelectDate = (date: string) => {
+    setPickerVisible(false);
+    router.push({ pathname: "/entry/[date]", params: { date } });
+  };
+
+  // Check-in form state
   const [breakfast, setBreakfast] = useState("");
   const [lunch, setLunch] = useState("");
   const [dinner, setDinner] = useState("");
   const [snacks, setSnacks] = useState("");
-
-  // Signal ratings — hardcoded to protein + calories for now
-  // will be driven by settings later
-  const [caloriesRating, setCaloriesRating] =
-    useState<SignalRating | null>(null);
-  const [proteinRating, setProteinRating] = useState<SignalRating | null>(null);
-
-  // Tags
+  const [signalRatings, setSignalRatings] = useState<
+    Record<string, SignalRating | null>
+  >({});
   const [selectedTags, setSelectedTags] = useState<Set<TagId>>(new Set());
-
-  // Note
   const [note, setNote] = useState("");
+
+  const initializedRef = useRef(false);
+
+  useEffect(() => {
+    if (!loaded || initializedRef.current) {
+      return;
+    }
+    initializedRef.current = true;
+
+    const entry = entries[today];
+    if (!entry) {
+      return;
+    }
+
+    setBreakfast(entry.breakfast);
+    setLunch(entry.lunch);
+    setDinner(entry.dinner);
+    setSnacks(entry.snacks);
+    setSignalRatings(entry.signals as Record<string, SignalRating | null>);
+    setSelectedTags(new Set(entry.tags) as Set<TagId>);
+    setNote(entry.note);
+  }, [loaded, entries, today]);
 
   const toggleTag = (id: TagId) => {
     setSelectedTags((prev) => {
@@ -89,9 +140,26 @@ export default function LogScreen() {
     });
   };
 
+  const toggleSignal = (signalId: string, rating: SignalRating) => {
+    setSignalRatings((prev) => ({
+      ...prev,
+      [signalId]: prev[signalId] === rating ? null : rating,
+    }));
+  };
+
   const handleSave = () => {
-    // persistence comes later — placeholder for now
     Keyboard.dismiss();
+    saveEntry({
+      date: today,
+      breakfast,
+      lunch,
+      dinner,
+      snacks,
+      signals: signalRatings,
+      tags: Array.from(selectedTags),
+      note,
+      savedAt: Date.now(),
+    });
   };
 
   return (
@@ -102,6 +170,7 @@ export default function LogScreen() {
       <Header
         headerTitle="Nourish"
         hideBackButton
+        leftAction={{ icon: "history", onPress: () => setPickerVisible(true) }}
         rightAction={{ icon: "check", onPress: handleSave }}
       />
 
@@ -124,7 +193,9 @@ export default function LogScreen() {
               >
                 {/* ── SECTION: What you ate ── */}
                 <View style={styles.sectionHeader}>
-                  <StyledText style={[styles.sectionLabel, { color: dimColor }]}>
+                  <StyledText
+                    style={[styles.sectionLabel, { color: dimColor }]}
+                  >
                     what you ate
                   </StyledText>
                 </View>
@@ -146,7 +217,9 @@ export default function LogScreen() {
                   />
                 </View>
 
-                <View style={[styles.divider, { backgroundColor: dividerColor }]} />
+                <View
+                  style={[styles.divider, { backgroundColor: dividerColor }]}
+                />
 
                 <View style={styles.field}>
                   <StyledText style={[styles.fieldLabel, { color: dimColor }]}>
@@ -165,7 +238,9 @@ export default function LogScreen() {
                   />
                 </View>
 
-                <View style={[styles.divider, { backgroundColor: dividerColor }]} />
+                <View
+                  style={[styles.divider, { backgroundColor: dividerColor }]}
+                />
 
                 <View style={styles.field}>
                   <StyledText style={[styles.fieldLabel, { color: dimColor }]}>
@@ -184,7 +259,9 @@ export default function LogScreen() {
                   />
                 </View>
 
-                <View style={[styles.divider, { backgroundColor: dividerColor }]} />
+                <View
+                  style={[styles.divider, { backgroundColor: dividerColor }]}
+                />
 
                 <View style={styles.field}>
                   <StyledText style={[styles.fieldLabel, { color: dimColor }]}>
@@ -204,75 +281,69 @@ export default function LogScreen() {
                 </View>
 
                 {/* ── SECTION: How it went ── */}
-                <View style={[styles.sectionHeader, styles.sectionHeaderSpaced]}>
-                  <StyledText style={[styles.sectionLabel, { color: dimColor }]}>
-                    how it went
-                  </StyledText>
-                </View>
-
-                {/* Calories signal */}
-                <View style={styles.field}>
-                  <StyledText style={[styles.fieldLabel, { color: dimColor }]}>
-                    calories
-                  </StyledText>
-                  <View style={styles.ratingRow}>
-                    {SIGNAL_RATINGS.map((rating) => (
-                      <HapticPressable
-                        key={rating}
-                        onPress={() =>
-                          setCaloriesRating(
-                            caloriesRating === rating ? null : rating
-                          )
-                        }
-                      >
-                        <StyledText
-                          style={[
-                            styles.ratingOption,
-                            { color: textColor },
-                            caloriesRating === rating && styles.ratingSelected,
-                          ]}
-                        >
-                          {rating}
-                        </StyledText>
-                      </HapticPressable>
-                    ))}
+                {enabledSignals.length > 0 && (
+                  <View
+                    style={[styles.sectionHeader, styles.sectionHeaderSpaced]}
+                  >
+                    <StyledText
+                      style={[styles.sectionLabel, { color: dimColor }]}
+                    >
+                      how it went
+                    </StyledText>
                   </View>
-                </View>
+                )}
 
-                <View style={[styles.divider, { backgroundColor: dividerColor }]} />
-
-                {/* Protein signal */}
-                <View style={styles.field}>
-                  <StyledText style={[styles.fieldLabel, { color: dimColor }]}>
-                    protein
-                  </StyledText>
-                  <View style={styles.ratingRow}>
-                    {SIGNAL_RATINGS.map((rating) => (
-                      <HapticPressable
-                        key={rating}
-                        onPress={() =>
-                          setProteinRating(
-                            proteinRating === rating ? null : rating
-                          )
-                        }
-                      >
-                        <StyledText
+                {enabledSignals.map((signalId, index) => {
+                  const label =
+                    SIGNAL_OPTIONS.find((s) => s.id === signalId)?.label ??
+                    signalId;
+                  const current = signalRatings[signalId] ?? null;
+                  return (
+                    <View key={signalId}>
+                      {index > 0 && (
+                        <View
                           style={[
-                            styles.ratingOption,
-                            { color: textColor },
-                            proteinRating === rating && styles.ratingSelected,
+                            styles.divider,
+                            { backgroundColor: dividerColor },
                           ]}
+                        />
+                      )}
+                      <View style={styles.field}>
+                        <StyledText
+                          style={[styles.fieldLabel, { color: dimColor }]}
                         >
-                          {rating}
+                          {label}
                         </StyledText>
-                      </HapticPressable>
-                    ))}
-                  </View>
-                </View>
+                        <View style={styles.ratingRow}>
+                          {SIGNAL_RATINGS.map((rating) => (
+                            <HapticPressable
+                              key={rating}
+                              onPress={() => toggleSignal(signalId, rating)}
+                            >
+                              <StyledText
+                                style={[
+                                  styles.ratingOption,
+                                  { color: textColor },
+                                  current === rating && styles.ratingSelected,
+                                ]}
+                              >
+                                {rating}
+                              </StyledText>
+                            </HapticPressable>
+                          ))}
+                        </View>
+                      </View>
+                    </View>
+                  );
+                })}
 
                 {/* ── SECTION: Context ── */}
-                <View style={[styles.sectionHeader, styles.sectionHeaderSpaced]}>
-                  <StyledText style={[styles.sectionLabel, { color: dimColor }]}>
+                <View
+                  style={[styles.sectionHeader, styles.sectionHeaderSpaced]}
+                >
+                  <StyledText
+                    style={[styles.sectionLabel, { color: dimColor }]}
+                  >
                     context
                   </StyledText>
                 </View>
@@ -298,8 +369,12 @@ export default function LogScreen() {
                 </View>
 
                 {/* ── Note ── */}
-                <View style={[styles.sectionHeader, styles.sectionHeaderSpaced]}>
-                  <StyledText style={[styles.sectionLabel, { color: dimColor }]}>
+                <View
+                  style={[styles.sectionHeader, styles.sectionHeaderSpaced]}
+                >
+                  <StyledText
+                    style={[styles.sectionLabel, { color: dimColor }]}
+                  >
                     note
                   </StyledText>
                 </View>
@@ -341,6 +416,16 @@ export default function LogScreen() {
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
+
+      <DatePicker
+        onDismiss={() => setPickerVisible(false)}
+        onNextMonth={handleNextMonth}
+        onPrevMonth={handlePrevMonth}
+        onSelect={handleSelectDate}
+        viewMonth={viewMonth}
+        viewYear={viewYear}
+        visible={pickerVisible}
+      />
     </SafeAreaView>
   );
 }

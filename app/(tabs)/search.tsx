@@ -1,37 +1,56 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import ContentContainer from "@/components/ContentContainer";
+import { StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Header } from "@/components/Header";
 import { TextInput } from "@/components/TextInput";
+import { useInvertColors } from "@/contexts/InvertColorsContext";
+import { n } from "@/utils/scaling";
 
 export default function SearchScreen() {
+  const { invertColors } = useInvertColors();
+  const bg = invertColors ? "white" : "black";
+
   const [query, setQuery] = useState("");
 
   const handleSearch = () => {
-    if (query.length > 0) {
-      router.push({
-        pathname: "/search-results",
-        params: { query },
-      });
+    const trimmed = query.trim();
+    if (trimmed.length > 0) {
+      router.push({ pathname: "/search-results", params: { query: trimmed } });
     }
   };
 
   return (
-    <ContentContainer
-      headerTitle="Search"
-      hideBackButton
-      rightAction={{
-        icon: "search",
-        onPress: handleSearch,
-        show: query.length > 0,
-      }}
+    <SafeAreaView
+      edges={["top"]}
+      style={[styles.container, { backgroundColor: bg }]}
     >
-      <TextInput
-        autoFocus
-        onChangeText={setQuery}
-        onSubmit={handleSearch}
-        placeholder="Search..."
-        value={query}
+      <Header
+        headerTitle="Search"
+        hideBackButton
+        rightAction={{
+          icon: "search",
+          onPress: handleSearch,
+          show: query.length > 0,
+        }}
       />
-    </ContentContainer>
+      <View style={styles.inputWrapper}>
+        <TextInput
+          autoFocus
+          onChangeText={setQuery}
+          onSubmit={handleSearch}
+          placeholder="search foods..."
+          value={query}
+        />
+      </View>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  inputWrapper: {
+    paddingHorizontal: n(22),
+    paddingTop: n(16),
+  },
+});
