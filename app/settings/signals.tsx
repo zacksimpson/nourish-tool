@@ -113,26 +113,30 @@ export default function SignalsScreen() {
                   </StyledText>
                 </HapticPressable>
 
-                {isSelected && (
-                  <View style={styles.targetContainer}>
-                    <RNTextInput
-                      allowFontScaling={false}
-                      cursorColor={textColor}
-                      defaultValue={target === undefined ? "" : String(target)}
-                      keyboardType="numeric"
-                      onEndEditing={(e) =>
-                        handleTargetChange(signal.id, e.nativeEvent.text)
-                      }
-                      placeholder="—"
-                      placeholderTextColor={textColor}
-                      selectionColor={textColor}
-                      style={[styles.targetInput, { color: textColor }]}
-                    />
-                    <StyledText style={[styles.unit, { color: textColor }]}>
-                      {SIGNAL_UNITS[signal.id]}
-                    </StyledText>
-                  </View>
-                )}
+                <View
+                  pointerEvents={isSelected ? "auto" : "none"}
+                  style={[
+                    styles.targetContainer,
+                    { opacity: isSelected ? 1 : 0 },
+                  ]}
+                >
+                  <RNTextInput
+                    allowFontScaling={false}
+                    cursorColor={textColor}
+                    defaultValue={target === undefined ? "" : String(target)}
+                    keyboardType="numeric"
+                    onEndEditing={(e) =>
+                      handleTargetChange(signal.id, e.nativeEvent.text)
+                    }
+                    placeholder="—"
+                    placeholderTextColor={textColor}
+                    selectionColor={textColor}
+                    style={[styles.targetInput, { color: textColor }]}
+                  />
+                  <StyledText style={[styles.unit, { color: textColor }]}>
+                    {SIGNAL_UNITS[signal.id]}
+                  </StyledText>
+                </View>
               </View>
             );
           })}

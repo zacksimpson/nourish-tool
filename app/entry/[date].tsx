@@ -24,7 +24,7 @@ import {
   consumeResult,
   openPicker,
 } from "@/utils/contextPickerStore";
-import { formatDate } from "@/utils/formatDate";
+import { formatDateShort } from "@/utils/formatDate";
 import { n } from "@/utils/scaling";
 import { getTagLabel, type TagId } from "@/utils/tags";
 
@@ -326,7 +326,7 @@ export default function EntryDetailScreen() {
                   <StyledText
                     style={[styles.fieldInput, { color: textColor }]}
                   >
-                    {contextDisplay ?? "—"}
+                    {contextDisplay ?? "Add context tags"}
                   </StyledText>
                 </HapticPressable>
 
@@ -400,6 +400,7 @@ export default function EntryDetailScreen() {
         >
           <View
             onLayout={(e) => setContentHeight(e.nativeEvent.layout.height)}
+            style={styles.content}
           >
             <View style={styles.field}>
               <StyledText style={[styles.fieldLabel, { color: textColor }]}>
@@ -450,6 +451,9 @@ export default function EntryDetailScreen() {
 
             {currentEntry.tags.length > 0 && (
               <View style={styles.field}>
+                <StyledText style={[styles.fieldLabel, { color: textColor }]}>
+                  context
+                </StyledText>
                 <StyledText style={[styles.fieldValue, { color: textColor }]}>
                   {currentEntry.tags.map((id) => getTagLabel(id)).join(", ")}
                 </StyledText>
@@ -458,6 +462,9 @@ export default function EntryDetailScreen() {
 
             {currentEntry.note.length > 0 && (
               <View style={styles.field}>
+                <StyledText style={[styles.fieldLabel, { color: textColor }]}>
+                  notes
+                </StyledText>
                 <StyledText style={[styles.fieldValue, { color: textColor }]}>
                   {currentEntry.note}
                 </StyledText>
@@ -493,7 +500,7 @@ export default function EntryDetailScreen() {
         style={[styles.container, { backgroundColor: bg }]}
       >
         <Header
-          headerTitle={formatDate(currentDate)}
+          headerTitle={formatDateShort(currentDate)}
           hideBackButton={isEditing}
           leftAction={
             isEditing
