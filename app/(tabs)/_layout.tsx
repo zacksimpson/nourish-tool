@@ -1,11 +1,5 @@
 import { Tabs } from "expo-router";
-import { Navbar, type TabConfigItem } from "@/components/Navbar";
-
-export const TABS_CONFIG: readonly TabConfigItem[] = [
-  { name: "LOG", screenName: "index", iconName: "edit-note" },
-  { name: "SEARCH", screenName: "search", iconName: "search" },
-  { name: "SETTINGS", screenName: "settings", iconName: "settings" },
-] as const;
+import { Navbar } from "@/components/Navbar";
 
 export default function TabLayout() {
   return (
@@ -16,18 +10,12 @@ export default function TabLayout() {
           <Navbar
             currentScreenName={activeScreenName}
             navigation={props.navigation}
-            tabsConfig={TABS_CONFIG}
           />
         );
       }}
     >
-      {TABS_CONFIG.map((tab) => (
-        <Tabs.Screen
-          key={tab.screenName}
-          name={tab.screenName}
-          options={{ header: () => null }}
-        />
-      ))}
+      <Tabs.Screen name="index" options={{ header: () => null }} />
+      <Tabs.Screen name="history" options={{ header: () => null }} />
     </Tabs>
   );
 }
