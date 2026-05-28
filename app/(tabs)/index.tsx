@@ -17,6 +17,7 @@ import {
   scrollIndicatorBaseStyles,
   useScrollIndicator,
 } from "@/hooks/useScrollIndicator";
+import { formatDateShort } from "@/utils/formatDate";
 import { n } from "@/utils/scaling";
 
 const TAGS = [
@@ -133,7 +134,7 @@ export default function LogScreen() {
       style={[styles.container, { backgroundColor: bg }]}
     >
       <Header
-        headerTitle="Nourish"
+        headerTitle={formatDateShort(today)}
         hideBackButton
         rightAction={{ icon: "check", onPress: handleSave }}
       />
