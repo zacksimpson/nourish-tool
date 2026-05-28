@@ -55,7 +55,8 @@ function resolveServing(data: FoodDetail): { scale: number; label: string } {
       label = portion.portionDescription.toLowerCase();
     } else {
       const unitName = portion.measureUnit?.name?.toLowerCase();
-      const hasUnit = unitName && unitName !== "undetermined";
+      const hasUnit =
+        unitName && unitName !== "undetermined" && unitName !== "racc";
       label = hasUnit
         ? `${portion.amount} ${portion.measureUnit?.abbreviation ?? portion.measureUnit?.name}`
         : `${Math.round(portion.gramWeight)}g`;
@@ -114,7 +115,7 @@ export default function FoodDetailScreen() {
   }, [id]);
 
   const getNutrientAmount = (nutrientId: number): number | null => {
-    const match = nutrients.find((n) => n.nutrient.id === nutrientId);
+    const match = nutrients.find((n) => n.nutrient?.id === nutrientId);
     return match ? match.amount : null;
   };
 

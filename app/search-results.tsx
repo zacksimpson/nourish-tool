@@ -73,7 +73,25 @@ export default function SearchResultsScreen() {
         if (data.foods.length === 0) {
           setStatus("empty");
         } else {
-          setResults(data.foods);
+          const seen = new Set<string>();
+          const deduped = data.foods.filter((food) => {
+            const key = food.description.toLowerCase();
+            if (seen.has(key)) {
+              return false;
+            }
+            seen.add(key);
+            return true;
+          });
+          const sorted = [...deduped].sort((a, b) => {
+            if (a.dataType === "Foundation" && b.dataType !== "Foundation") {
+              return -1;
+            }
+            if (a.dataType !== "Foundation" && b.dataType === "Foundation") {
+              return 1;
+            }
+            return 0;
+          });
+          setResults(sorted);
           setStatus("success");
         }
       })
