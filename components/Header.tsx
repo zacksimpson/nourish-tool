@@ -6,7 +6,7 @@ import { n } from "@/utils/scaling";
 import { HapticPressable } from "./HapticPressable";
 import { StyledText } from "./StyledText";
 
-interface RightAction {
+interface HeaderAction {
   icon: keyof typeof MaterialIcons.glyphMap;
   onPress: () => void;
   show?: boolean;
@@ -15,12 +15,14 @@ interface RightAction {
 interface HeaderProps {
   headerTitle?: string;
   hideBackButton?: boolean;
-  rightAction?: RightAction;
+  leftAction?: HeaderAction;
+  rightAction?: HeaderAction;
 }
 
 export function Header({
   headerTitle,
   hideBackButton = false,
+  leftAction,
   rightAction,
 }: HeaderProps) {
   const { invertColors } = useInvertColors();
@@ -32,16 +34,9 @@ export function Header({
     }
   };
 
-  return (
-    <View
-      style={[
-        styles.header,
-        { backgroundColor: invertColors ? "white" : "black" },
-      ]}
-    >
-      {hideBackButton ? (
-        <View style={styles.button} />
-      ) : (
+  const renderLeft = () => {
+    if (!hideBackButton) {
+      return (
         <HapticPressable onPress={handleBack}>
           <View style={styles.button}>
             <MaterialIcons
@@ -51,7 +46,32 @@ export function Header({
             />
           </View>
         </HapticPressable>
-      )}
+      );
+    }
+    if (leftAction?.show !== false && leftAction?.icon) {
+      return (
+        <HapticPressable onPress={leftAction.onPress}>
+          <View style={styles.button}>
+            <MaterialIcons
+              color={iconColor}
+              name={leftAction.icon}
+              size={n(28)}
+            />
+          </View>
+        </HapticPressable>
+      );
+    }
+    return <View style={styles.button} />;
+  };
+
+  return (
+    <View
+      style={[
+        styles.header,
+        { backgroundColor: invertColors ? "white" : "black" },
+      ]}
+    >
+      {renderLeft()}
       <StyledText numberOfLines={1} style={styles.title}>
         {headerTitle}
       </StyledText>
