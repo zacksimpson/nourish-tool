@@ -17,8 +17,6 @@ export default function EntryDetailScreen() {
   const { invertColors } = useInvertColors();
   const bg = invertColors ? "white" : "black";
   const textColor = invertColors ? "black" : "white";
-  const dimColor = invertColors ? "#AAAAAA" : "#555555";
-  const dividerColor = invertColors ? "#DDDDDD" : "#1A1A1A";
 
   const { date } = useLocalSearchParams<{ date: string }>();
   const { entries } = useNourish();
@@ -47,7 +45,7 @@ export default function EntryDetailScreen() {
         >
           <Header headerTitle={date ? formatDate(date) : ""} />
           <View style={styles.emptyState}>
-            <StyledText style={[styles.emptyText, { color: dimColor }]}>
+            <StyledText style={[styles.emptyText, { color: textColor }]}>
               entry not found
             </StyledText>
           </View>
@@ -79,15 +77,8 @@ export default function EntryDetailScreen() {
             <View
               onLayout={(e) => setContentHeight(e.nativeEvent.layout.height)}
             >
-              {/* ── What you ate ── */}
-              <View style={styles.sectionHeader}>
-                <StyledText style={[styles.sectionLabel, { color: dimColor }]}>
-                  what you ate
-                </StyledText>
-              </View>
-
               <View style={styles.field}>
-                <StyledText style={[styles.fieldLabel, { color: dimColor }]}>
+                <StyledText style={[styles.fieldLabel, { color: textColor }]}>
                   breakfast
                 </StyledText>
                 <StyledText style={[styles.fieldValue, { color: textColor }]}>
@@ -95,12 +86,8 @@ export default function EntryDetailScreen() {
                 </StyledText>
               </View>
 
-              <View
-                style={[styles.divider, { backgroundColor: dividerColor }]}
-              />
-
               <View style={styles.field}>
-                <StyledText style={[styles.fieldLabel, { color: dimColor }]}>
+                <StyledText style={[styles.fieldLabel, { color: textColor }]}>
                   lunch
                 </StyledText>
                 <StyledText style={[styles.fieldValue, { color: textColor }]}>
@@ -108,12 +95,8 @@ export default function EntryDetailScreen() {
                 </StyledText>
               </View>
 
-              <View
-                style={[styles.divider, { backgroundColor: dividerColor }]}
-              />
-
               <View style={styles.field}>
-                <StyledText style={[styles.fieldLabel, { color: dimColor }]}>
+                <StyledText style={[styles.fieldLabel, { color: textColor }]}>
                   dinner
                 </StyledText>
                 <StyledText style={[styles.fieldValue, { color: textColor }]}>
@@ -121,12 +104,8 @@ export default function EntryDetailScreen() {
                 </StyledText>
               </View>
 
-              <View
-                style={[styles.divider, { backgroundColor: dividerColor }]}
-              />
-
               <View style={styles.field}>
-                <StyledText style={[styles.fieldLabel, { color: dimColor }]}>
+                <StyledText style={[styles.fieldLabel, { color: textColor }]}>
                   snacks
                 </StyledText>
                 <StyledText style={[styles.fieldValue, { color: textColor }]}>
@@ -134,90 +113,31 @@ export default function EntryDetailScreen() {
                 </StyledText>
               </View>
 
-              {/* ── How it went ── */}
-              {ratedSignals.length > 0 && (
-                <>
-                  <View
-                    style={[styles.sectionHeader, styles.sectionHeaderSpaced]}
-                  >
-                    <StyledText
-                      style={[styles.sectionLabel, { color: dimColor }]}
-                    >
-                      how it went
-                    </StyledText>
-                  </View>
+              {ratedSignals.map((signal) => (
+                <View key={signal.id} style={styles.field}>
+                  <StyledText style={[styles.fieldLabel, { color: textColor }]}>
+                    {signal.label}
+                  </StyledText>
+                  <StyledText style={[styles.fieldValue, { color: textColor }]}>
+                    {entry.signals[signal.id]}
+                  </StyledText>
+                </View>
+              ))}
 
-                  {ratedSignals.map((signal, index) => (
-                    <View key={signal.id}>
-                      {index > 0 && (
-                        <View
-                          style={[
-                            styles.divider,
-                            { backgroundColor: dividerColor },
-                          ]}
-                        />
-                      )}
-                      <View style={styles.field}>
-                        <StyledText
-                          style={[styles.fieldLabel, { color: dimColor }]}
-                        >
-                          {signal.label}
-                        </StyledText>
-                        <StyledText
-                          style={[styles.fieldValue, { color: textColor }]}
-                        >
-                          {entry.signals[signal.id]}
-                        </StyledText>
-                      </View>
-                    </View>
-                  ))}
-                </>
-              )}
-
-              {/* ── Context tags ── */}
               {entry.tags.length > 0 && (
-                <>
-                  <View
-                    style={[styles.sectionHeader, styles.sectionHeaderSpaced]}
-                  >
-                    <StyledText
-                      style={[styles.sectionLabel, { color: dimColor }]}
-                    >
-                      context
-                    </StyledText>
-                  </View>
-
-                  <View style={styles.field}>
-                    <StyledText
-                      style={[styles.fieldValue, { color: textColor }]}
-                    >
-                      {entry.tags.join(", ")}
-                    </StyledText>
-                  </View>
-                </>
+                <View style={styles.field}>
+                  <StyledText style={[styles.fieldValue, { color: textColor }]}>
+                    {entry.tags.join(", ")}
+                  </StyledText>
+                </View>
               )}
 
-              {/* ── Note ── */}
               {entry.note.length > 0 && (
-                <>
-                  <View
-                    style={[styles.sectionHeader, styles.sectionHeaderSpaced]}
-                  >
-                    <StyledText
-                      style={[styles.sectionLabel, { color: dimColor }]}
-                    >
-                      note
-                    </StyledText>
-                  </View>
-
-                  <View style={styles.field}>
-                    <StyledText
-                      style={[styles.fieldValue, { color: textColor }]}
-                    >
-                      {entry.note}
-                    </StyledText>
-                  </View>
-                </>
+                <View style={styles.field}>
+                  <StyledText style={[styles.fieldValue, { color: textColor }]}>
+                    {entry.note}
+                  </StyledText>
+                </View>
               )}
 
               <View style={styles.bottomPad} />
@@ -249,19 +169,6 @@ const styles = StyleSheet.create({
   scrollWrapper: { flex: 1, flexDirection: "row", position: "relative" },
   scrollTrack: scrollIndicatorBaseStyles.track,
   scrollThumb: scrollIndicatorBaseStyles.thumb,
-  sectionHeader: {
-    paddingHorizontal: n(22),
-    paddingTop: n(16),
-    paddingBottom: n(4),
-  },
-  sectionHeaderSpaced: {
-    paddingTop: n(32),
-  },
-  sectionLabel: {
-    fontSize: n(13),
-    letterSpacing: n(1.5),
-    textTransform: "uppercase",
-  },
   field: {
     paddingHorizontal: n(22),
     paddingVertical: n(13),
@@ -271,12 +178,8 @@ const styles = StyleSheet.create({
     marginBottom: n(6),
   },
   fieldValue: {
-    fontSize: n(22),
     fontFamily: "PublicSans-Regular",
-  },
-  divider: {
-    height: 1,
-    marginHorizontal: n(22),
+    fontSize: n(22),
   },
   emptyState: {
     paddingHorizontal: n(22),

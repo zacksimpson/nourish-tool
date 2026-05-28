@@ -29,7 +29,6 @@ export default function FoodDetailScreen() {
   const { invertColors } = useInvertColors();
   const bg = invertColors ? "white" : "black";
   const textColor = invertColors ? "black" : "white";
-  const dimColor = invertColors ? "#AAAAAA" : "#555555";
 
   const { id, name } = useLocalSearchParams<{ id: string; name: string }>();
 
@@ -77,7 +76,7 @@ export default function FoodDetailScreen() {
     if (status === "loading") {
       return (
         <View style={styles.stateContainer}>
-          <StyledText style={[styles.stateText, { color: dimColor }]}>
+          <StyledText style={[styles.stateText, { color: textColor }]}>
             loading...
           </StyledText>
         </View>
@@ -87,7 +86,7 @@ export default function FoodDetailScreen() {
     if (status === "error") {
       return (
         <View style={styles.stateContainer}>
-          <StyledText style={[styles.stateText, { color: dimColor }]}>
+          <StyledText style={[styles.stateText, { color: textColor }]}>
             something went wrong
           </StyledText>
         </View>
@@ -96,7 +95,7 @@ export default function FoodDetailScreen() {
 
     return (
       <View style={styles.content}>
-        <StyledText style={[styles.perLabel, { color: dimColor }]}>
+        <StyledText style={[styles.perLabel, { color: textColor }]}>
           per 100g
         </StyledText>
         {NUTRIENTS.map((nutrient) => {
