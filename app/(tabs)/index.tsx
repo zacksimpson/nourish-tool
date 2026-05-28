@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { router } from "expo-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   KeyboardAvoidingView,
@@ -17,29 +19,13 @@ import {
   scrollIndicatorBaseStyles,
   useScrollIndicator,
 } from "@/hooks/useScrollIndicator";
+import {
+  consumeResult,
+  openPicker,
+} from "@/utils/contextPickerStore";
 import { formatDateShort } from "@/utils/formatDate";
 import { n } from "@/utils/scaling";
-
-const TAGS = [
-  { id: "tired", label: "tired" },
-  { id: "sick", label: "sick" },
-  { id: "sore", label: "sore" },
-  { id: "restless", label: "restless" },
-  { id: "stressed", label: "stressed" },
-  { id: "anxious", label: "anxious" },
-  { id: "low-mood", label: "low mood" },
-  { id: "overwhelmed", label: "overwhelmed" },
-  { id: "social-eating", label: "social eating" },
-  { id: "traveling", label: "traveling" },
-  { id: "busy-day", label: "busy day" },
-  { id: "worked-late", label: "worked late" },
-  { id: "ate-out", label: "ate out" },
-  { id: "skipped-meal", label: "skipped a meal" },
-  { id: "ate-fast", label: "ate fast" },
-  { id: "late-night-eating", label: "late night eating" },
-] as const;
-
-type TagId = (typeof TAGS)[number]["id"];
+import { getTagLabel, type TagId } from "@/utils/tags";
 
 const SIGNAL_RATINGS = ["on track", "roughly", "off track"] as const;
 type SignalRating = (typeof SIGNAL_RATINGS)[number];
@@ -95,17 +81,23 @@ export default function LogScreen() {
     setNote(entry.note);
   }, [loaded, entries, today]);
 
-  const toggleTag = (id: TagId) => {
-    setSelectedTags((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
+  useFocusEffect(
+    useCallback(() => {
+      const result = consumeResult();
+      if (result !== null) {
+        setSelectedTags(new Set(result) as Set<TagId>);
       }
-      return next;
-    });
-  };
+    }, [])
+  );
+
+  const contextDisplay = useMemo(() => {
+    if (selectedTags.size === 0) {
+      return null;
+    }
+    return Array.from(selectedTags)
+      .map((id) => getTagLabel(id))
+      .join(", ");
+  }, [selectedTags]);
 
   const toggleSignal = (signalId: string, rating: SignalRating) => {
     setSignalRatings((prev) => ({
@@ -268,25 +260,20 @@ export default function LogScreen() {
                 );
               })}
 
-              <View style={styles.tagList}>
-                {TAGS.map((tag) => (
-                  <HapticPressable
-                    key={tag.id}
-                    onPress={() => toggleTag(tag.id)}
-                    style={styles.tagRow}
-                  >
-                    <StyledText
-                      style={[
-                        styles.tagText,
-                        { color: textColor },
-                        selectedTags.has(tag.id) && styles.tagSelected,
-                      ]}
-                    >
-                      {tag.label}
-                    </StyledText>
-                  </HapticPressable>
-                ))}
-              </View>
+              <HapticPressable
+                onPress={() => {
+                  openPicker(Array.from(selectedTags));
+                  router.push("/context-picker");
+                }}
+                style={styles.field}
+              >
+                <StyledText style={[styles.fieldLabel, { color: textColor }]}>
+                  context
+                </StyledText>
+                <StyledText style={[styles.fieldInput, { color: textColor }]}>
+                  {contextDisplay ?? "—"}
+                </StyledText>
+              </HapticPressable>
 
               <View style={styles.field}>
                 <RNTextInput
@@ -357,19 +344,6 @@ const styles = StyleSheet.create({
     fontFamily: "PublicSans-Regular",
   },
   ratingSelected: {
-    textDecorationLine: "underline",
-  },
-  tagList: {
-    paddingHorizontal: n(22),
-    paddingTop: n(4),
-  },
-  tagRow: {
-    paddingVertical: n(10),
-  },
-  tagText: {
-    fontSize: n(22),
-  },
-  tagSelected: {
     textDecorationLine: "underline",
   },
   bottomPad: {
