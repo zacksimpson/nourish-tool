@@ -13,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { HapticPressable } from "@/components/HapticPressable";
 import { Header } from "@/components/Header";
 import { StyledText } from "@/components/StyledText";
+import { Toast } from "@/components/Toast";
 import { useInvertColors } from "@/contexts/InvertColorsContext";
 import { SIGNAL_OPTIONS, useNourish } from "@/contexts/NourishContext";
 import {
@@ -58,6 +59,7 @@ export default function LogScreen() {
   >({});
   const [selectedTags, setSelectedTags] = useState<Set<TagId>>(new Set());
   const [note, setNote] = useState("");
+  const [toastVisible, setToastVisible] = useState(false);
 
   const initializedRef = useRef(false);
 
@@ -118,6 +120,7 @@ export default function LogScreen() {
       note,
       savedAt: Date.now(),
     });
+    setToastVisible(true);
   };
 
   return (
@@ -147,10 +150,11 @@ export default function LogScreen() {
           >
             <View
               onLayout={(e) => setContentHeight(e.nativeEvent.layout.height)}
+              style={styles.content}
             >
               <View style={styles.field}>
                 <StyledText style={[styles.fieldLabel, { color: textColor }]}>
-                  breakfast
+                  breakfast:
                 </StyledText>
                 <RNTextInput
                   allowFontScaling={false}
@@ -158,18 +162,19 @@ export default function LogScreen() {
                   cursorColor={textColor}
                   multiline
                   onChangeText={setBreakfast}
-                  placeholder="—"
+                  placeholder="Add breakfast"
                   placeholderTextColor={textColor}
                   returnKeyType="done"
                   selectionColor={textColor}
-                  style={[styles.fieldInput, { color: textColor }]}
+                  style={[styles.fieldInput, { color: textColor, borderBottomColor: textColor }]}
+                  underlineColorAndroid="transparent"
                   value={breakfast}
                 />
               </View>
 
               <View style={styles.field}>
                 <StyledText style={[styles.fieldLabel, { color: textColor }]}>
-                  lunch
+                  lunch:
                 </StyledText>
                 <RNTextInput
                   allowFontScaling={false}
@@ -177,18 +182,19 @@ export default function LogScreen() {
                   cursorColor={textColor}
                   multiline
                   onChangeText={setLunch}
-                  placeholder="—"
+                  placeholder="Add lunch"
                   placeholderTextColor={textColor}
                   returnKeyType="done"
                   selectionColor={textColor}
-                  style={[styles.fieldInput, { color: textColor }]}
+                  style={[styles.fieldInput, { color: textColor, borderBottomColor: textColor }]}
+                  underlineColorAndroid="transparent"
                   value={lunch}
                 />
               </View>
 
               <View style={styles.field}>
                 <StyledText style={[styles.fieldLabel, { color: textColor }]}>
-                  dinner
+                  dinner:
                 </StyledText>
                 <RNTextInput
                   allowFontScaling={false}
@@ -196,18 +202,19 @@ export default function LogScreen() {
                   cursorColor={textColor}
                   multiline
                   onChangeText={setDinner}
-                  placeholder="—"
+                  placeholder="Add dinner"
                   placeholderTextColor={textColor}
                   returnKeyType="done"
                   selectionColor={textColor}
-                  style={[styles.fieldInput, { color: textColor }]}
+                  style={[styles.fieldInput, { color: textColor, borderBottomColor: textColor }]}
+                  underlineColorAndroid="transparent"
                   value={dinner}
                 />
               </View>
 
               <View style={styles.field}>
                 <StyledText style={[styles.fieldLabel, { color: textColor }]}>
-                  snacks
+                  snacks:
                 </StyledText>
                 <RNTextInput
                   allowFontScaling={false}
@@ -215,11 +222,12 @@ export default function LogScreen() {
                   cursorColor={textColor}
                   multiline
                   onChangeText={setSnacks}
-                  placeholder="—"
+                  placeholder="Add snacks"
                   placeholderTextColor={textColor}
                   returnKeyType="done"
                   selectionColor={textColor}
-                  style={[styles.fieldInput, { color: textColor }]}
+                  style={[styles.fieldInput, { color: textColor, borderBottomColor: textColor }]}
+                  underlineColorAndroid="transparent"
                   value={snacks}
                 />
               </View>
@@ -235,7 +243,7 @@ export default function LogScreen() {
                       <StyledText
                         style={[styles.fieldLabel, { color: textColor }]}
                       >
-                        {label}
+                        {label}:
                       </StyledText>
                       <View style={styles.ratingRow}>
                         {SIGNAL_RATINGS.map((rating) => (
@@ -268,7 +276,7 @@ export default function LogScreen() {
                 style={styles.field}
               >
                 <StyledText style={[styles.fieldLabel, { color: textColor }]}>
-                  context
+                  context:
                 </StyledText>
                 <StyledText style={[styles.fieldInput, { color: textColor }]}>
                   {contextDisplay ?? "—"}
@@ -282,11 +290,12 @@ export default function LogScreen() {
                   cursorColor={textColor}
                   multiline
                   onChangeText={setNote}
-                  placeholder="anything else worth noting"
+                  placeholder="Add notes"
                   placeholderTextColor={textColor}
                   returnKeyType="done"
                   selectionColor={textColor}
-                  style={[styles.fieldInput, { color: textColor }]}
+                  style={[styles.fieldInput, { color: textColor, borderBottomColor: textColor }]}
+                  underlineColorAndroid="transparent"
                   value={note}
                 />
               </View>
@@ -311,6 +320,12 @@ export default function LogScreen() {
           )}
         </View>
       </KeyboardAvoidingView>
+
+      <Toast
+        message="logged"
+        onHide={() => setToastVisible(false)}
+        visible={toastVisible}
+      />
     </SafeAreaView>
   );
 }
@@ -322,17 +337,21 @@ const styles = StyleSheet.create({
   scrollTrack: scrollIndicatorBaseStyles.track,
   scrollThumb: scrollIndicatorBaseStyles.thumb,
   field: {
-    paddingHorizontal: n(22),
+    paddingHorizontal: n(28),
     paddingVertical: n(13),
   },
   fieldLabel: {
-    fontSize: n(14),
+    fontSize: n(16),
     marginBottom: n(6),
   },
   fieldInput: {
-    fontSize: n(22),
+    fontSize: n(23),
     fontFamily: "PublicSans-Regular",
     paddingVertical: n(2),
+    paddingBottom: n(4),
+    paddingLeft: 0,
+    borderBottomWidth: n(3),
+    marginRight: n(18),
   },
   ratingRow: {
     flexDirection: "row",
@@ -345,6 +364,9 @@ const styles = StyleSheet.create({
   },
   ratingSelected: {
     textDecorationLine: "underline",
+  },
+  content: {
+    paddingTop: n(12),
   },
   bottomPad: {
     height: n(40),

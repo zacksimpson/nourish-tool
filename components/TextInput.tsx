@@ -43,6 +43,7 @@ export function TextInput({
         returnKeyType="search"
         selectionColor={textColor}
         style={[styles.input, { color: textColor }]}
+        underlineColorAndroid="transparent"
         value={value}
       />
       {value.length > 0 && (
@@ -59,14 +60,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     width: "100%",
-    borderBottomWidth: n(1),
+    borderBottomWidth: n(3),
   },
   input: {
     flex: 1,
     fontSize: n(24),
     fontFamily: "PublicSans-Regular",
     paddingVertical: n(2),
-    paddingBottom: n(6),
+    paddingBottom: n(4),
+    paddingLeft: 0,
   },
   clearButton: {
     padding: n(5),
