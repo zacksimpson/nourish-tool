@@ -199,11 +199,13 @@ export default function LogScreen() {
                 </StyledText>
                 <RNTextInput
                   allowFontScaling={false}
+                  blurOnSubmit
                   cursorColor={textColor}
                   multiline
                   onChangeText={setBreakfast}
                   placeholder="—"
                   placeholderTextColor={textColor}
+                  returnKeyType="done"
                   selectionColor={textColor}
                   style={[styles.fieldInput, { color: textColor }]}
                   value={breakfast}
@@ -216,11 +218,13 @@ export default function LogScreen() {
                 </StyledText>
                 <RNTextInput
                   allowFontScaling={false}
+                  blurOnSubmit
                   cursorColor={textColor}
                   multiline
                   onChangeText={setLunch}
                   placeholder="—"
                   placeholderTextColor={textColor}
+                  returnKeyType="done"
                   selectionColor={textColor}
                   style={[styles.fieldInput, { color: textColor }]}
                   value={lunch}
@@ -233,11 +237,13 @@ export default function LogScreen() {
                 </StyledText>
                 <RNTextInput
                   allowFontScaling={false}
+                  blurOnSubmit
                   cursorColor={textColor}
                   multiline
                   onChangeText={setDinner}
                   placeholder="—"
                   placeholderTextColor={textColor}
+                  returnKeyType="done"
                   selectionColor={textColor}
                   style={[styles.fieldInput, { color: textColor }]}
                   value={dinner}
@@ -250,11 +256,13 @@ export default function LogScreen() {
                 </StyledText>
                 <RNTextInput
                   allowFontScaling={false}
+                  blurOnSubmit
                   cursorColor={textColor}
                   multiline
                   onChangeText={setSnacks}
                   placeholder="—"
                   placeholderTextColor={textColor}
+                  returnKeyType="done"
                   selectionColor={textColor}
                   style={[styles.fieldInput, { color: textColor }]}
                   value={snacks}
@@ -347,11 +355,13 @@ export default function LogScreen() {
               <View style={styles.field}>
                 <RNTextInput
                   allowFontScaling={false}
+                  blurOnSubmit
                   cursorColor={textColor}
                   multiline
                   onChangeText={setNote}
                   placeholder="anything else worth noting"
                   placeholderTextColor={textColor}
+                  returnKeyType="done"
                   selectionColor={textColor}
                   style={[styles.fieldInput, { color: textColor }]}
                   value={note}
