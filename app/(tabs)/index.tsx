@@ -2,12 +2,10 @@ import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
-  Keyboard,
   KeyboardAvoidingView,
   Platform,
   TextInput as RNTextInput,
   StyleSheet,
-  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -51,8 +49,6 @@ export default function LogScreen() {
   const { invertColors } = useInvertColors();
   const bg = invertColors ? "white" : "black";
   const textColor = invertColors ? "black" : "white";
-  const dimColor = invertColors ? "#AAAAAA" : "#555555";
-  const dividerColor = invertColors ? "#DDDDDD" : "#1A1A1A";
 
   const { entries, signals: enabledSignals, saveEntry, loaded } = useNourish();
 
@@ -148,7 +144,6 @@ export default function LogScreen() {
   };
 
   const handleSave = () => {
-    Keyboard.dismiss();
     saveEntry({
       date: today,
       breakfast,
@@ -178,243 +173,210 @@ export default function LogScreen() {
         behavior={Platform.OS === "android" ? "height" : "padding"}
         style={styles.flex}
       >
-        <TouchableWithoutFeedback accessible={false} onPress={Keyboard.dismiss}>
-          <View style={styles.scrollWrapper}>
-            <Animated.ScrollView
-              keyboardShouldPersistTaps="handled"
-              onLayout={(e) => setScrollViewHeight(e.nativeEvent.layout.height)}
-              onScroll={handleScroll}
-              overScrollMode="never"
-              scrollEventThrottle={16}
-              showsVerticalScrollIndicator={false}
+        <View style={styles.scrollWrapper}>
+          <Animated.ScrollView
+            keyboardDismissMode="on-drag"
+            keyboardShouldPersistTaps="handled"
+            onLayout={(e) => setScrollViewHeight(e.nativeEvent.layout.height)}
+            onScroll={handleScroll}
+            overScrollMode="never"
+            scrollEventThrottle={16}
+            showsVerticalScrollIndicator={false}
+          >
+            <View
+              onLayout={(e) => setContentHeight(e.nativeEvent.layout.height)}
             >
-              <View
-                onLayout={(e) => setContentHeight(e.nativeEvent.layout.height)}
-              >
-                {/* ── SECTION: What you ate ── */}
-                <View style={styles.sectionHeader}>
+              {/* ── SECTION: What you ate ── */}
+              <View style={styles.sectionHeader}>
+                <StyledText style={[styles.sectionLabel, { color: textColor }]}>
+                  what you ate
+                </StyledText>
+              </View>
+
+              <View style={styles.field}>
+                <StyledText style={[styles.fieldLabel, { color: textColor }]}>
+                  breakfast
+                </StyledText>
+                <RNTextInput
+                  allowFontScaling={false}
+                  cursorColor={textColor}
+                  multiline
+                  onChangeText={setBreakfast}
+                  placeholder="—"
+                  placeholderTextColor={textColor}
+                  selectionColor={textColor}
+                  style={[styles.fieldInput, { color: textColor }]}
+                  value={breakfast}
+                />
+              </View>
+
+              <View style={styles.field}>
+                <StyledText style={[styles.fieldLabel, { color: textColor }]}>
+                  lunch
+                </StyledText>
+                <RNTextInput
+                  allowFontScaling={false}
+                  cursorColor={textColor}
+                  multiline
+                  onChangeText={setLunch}
+                  placeholder="—"
+                  placeholderTextColor={textColor}
+                  selectionColor={textColor}
+                  style={[styles.fieldInput, { color: textColor }]}
+                  value={lunch}
+                />
+              </View>
+
+              <View style={styles.field}>
+                <StyledText style={[styles.fieldLabel, { color: textColor }]}>
+                  dinner
+                </StyledText>
+                <RNTextInput
+                  allowFontScaling={false}
+                  cursorColor={textColor}
+                  multiline
+                  onChangeText={setDinner}
+                  placeholder="—"
+                  placeholderTextColor={textColor}
+                  selectionColor={textColor}
+                  style={[styles.fieldInput, { color: textColor }]}
+                  value={dinner}
+                />
+              </View>
+
+              <View style={styles.field}>
+                <StyledText style={[styles.fieldLabel, { color: textColor }]}>
+                  snacks
+                </StyledText>
+                <RNTextInput
+                  allowFontScaling={false}
+                  cursorColor={textColor}
+                  multiline
+                  onChangeText={setSnacks}
+                  placeholder="—"
+                  placeholderTextColor={textColor}
+                  selectionColor={textColor}
+                  style={[styles.fieldInput, { color: textColor }]}
+                  value={snacks}
+                />
+              </View>
+
+              {/* ── SECTION: How it went ── */}
+              {enabledSignals.length > 0 && (
+                <View
+                  style={[styles.sectionHeader, styles.sectionHeaderSpaced]}
+                >
                   <StyledText
-                    style={[styles.sectionLabel, { color: dimColor }]}
+                    style={[styles.sectionLabel, { color: textColor }]}
                   >
-                    what you ate
+                    how it went
                   </StyledText>
                 </View>
+              )}
 
-                <View style={styles.field}>
-                  <StyledText style={[styles.fieldLabel, { color: dimColor }]}>
-                    breakfast
-                  </StyledText>
-                  <RNTextInput
-                    allowFontScaling={false}
-                    cursorColor={textColor}
-                    multiline
-                    onChangeText={setBreakfast}
-                    placeholder="—"
-                    placeholderTextColor={dimColor}
-                    selectionColor={textColor}
-                    style={[styles.fieldInput, { color: textColor }]}
-                    value={breakfast}
-                  />
-                </View>
-
-                <View
-                  style={[styles.divider, { backgroundColor: dividerColor }]}
-                />
-
-                <View style={styles.field}>
-                  <StyledText style={[styles.fieldLabel, { color: dimColor }]}>
-                    lunch
-                  </StyledText>
-                  <RNTextInput
-                    allowFontScaling={false}
-                    cursorColor={textColor}
-                    multiline
-                    onChangeText={setLunch}
-                    placeholder="—"
-                    placeholderTextColor={dimColor}
-                    selectionColor={textColor}
-                    style={[styles.fieldInput, { color: textColor }]}
-                    value={lunch}
-                  />
-                </View>
-
-                <View
-                  style={[styles.divider, { backgroundColor: dividerColor }]}
-                />
-
-                <View style={styles.field}>
-                  <StyledText style={[styles.fieldLabel, { color: dimColor }]}>
-                    dinner
-                  </StyledText>
-                  <RNTextInput
-                    allowFontScaling={false}
-                    cursorColor={textColor}
-                    multiline
-                    onChangeText={setDinner}
-                    placeholder="—"
-                    placeholderTextColor={dimColor}
-                    selectionColor={textColor}
-                    style={[styles.fieldInput, { color: textColor }]}
-                    value={dinner}
-                  />
-                </View>
-
-                <View
-                  style={[styles.divider, { backgroundColor: dividerColor }]}
-                />
-
-                <View style={styles.field}>
-                  <StyledText style={[styles.fieldLabel, { color: dimColor }]}>
-                    snacks
-                  </StyledText>
-                  <RNTextInput
-                    allowFontScaling={false}
-                    cursorColor={textColor}
-                    multiline
-                    onChangeText={setSnacks}
-                    placeholder="—"
-                    placeholderTextColor={dimColor}
-                    selectionColor={textColor}
-                    style={[styles.fieldInput, { color: textColor }]}
-                    value={snacks}
-                  />
-                </View>
-
-                {/* ── SECTION: How it went ── */}
-                {enabledSignals.length > 0 && (
-                  <View
-                    style={[styles.sectionHeader, styles.sectionHeaderSpaced]}
-                  >
-                    <StyledText
-                      style={[styles.sectionLabel, { color: dimColor }]}
-                    >
-                      how it went
-                    </StyledText>
-                  </View>
-                )}
-
-                {enabledSignals.map((signalId, index) => {
-                  const label =
-                    SIGNAL_OPTIONS.find((s) => s.id === signalId)?.label ??
-                    signalId;
-                  const current = signalRatings[signalId] ?? null;
-                  return (
-                    <View key={signalId}>
-                      {index > 0 && (
-                        <View
-                          style={[
-                            styles.divider,
-                            { backgroundColor: dividerColor },
-                          ]}
-                        />
-                      )}
-                      <View style={styles.field}>
-                        <StyledText
-                          style={[styles.fieldLabel, { color: dimColor }]}
-                        >
-                          {label}
-                        </StyledText>
-                        <View style={styles.ratingRow}>
-                          {SIGNAL_RATINGS.map((rating) => (
-                            <HapticPressable
-                              key={rating}
-                              onPress={() => toggleSignal(signalId, rating)}
+              {enabledSignals.map((signalId) => {
+                const label =
+                  SIGNAL_OPTIONS.find((s) => s.id === signalId)?.label ??
+                  signalId;
+                const current = signalRatings[signalId] ?? null;
+                return (
+                  <View key={signalId}>
+                    <View style={styles.field}>
+                      <StyledText
+                        style={[styles.fieldLabel, { color: textColor }]}
+                      >
+                        {label}
+                      </StyledText>
+                      <View style={styles.ratingRow}>
+                        {SIGNAL_RATINGS.map((rating) => (
+                          <HapticPressable
+                            key={rating}
+                            onPress={() => toggleSignal(signalId, rating)}
+                          >
+                            <StyledText
+                              style={[
+                                styles.ratingOption,
+                                { color: textColor },
+                                current === rating && styles.ratingSelected,
+                              ]}
                             >
-                              <StyledText
-                                style={[
-                                  styles.ratingOption,
-                                  { color: textColor },
-                                  current === rating && styles.ratingSelected,
-                                ]}
-                              >
-                                {rating}
-                              </StyledText>
-                            </HapticPressable>
-                          ))}
-                        </View>
+                              {rating}
+                            </StyledText>
+                          </HapticPressable>
+                        ))}
                       </View>
                     </View>
-                  );
-                })}
+                  </View>
+                );
+              })}
 
-                {/* ── SECTION: Context ── */}
-                <View
-                  style={[styles.sectionHeader, styles.sectionHeaderSpaced]}
-                >
-                  <StyledText
-                    style={[styles.sectionLabel, { color: dimColor }]}
-                  >
-                    context
-                  </StyledText>
-                </View>
-
-                <View style={styles.tagList}>
-                  {TAGS.map((tag) => (
-                    <HapticPressable
-                      key={tag.id}
-                      onPress={() => toggleTag(tag.id)}
-                      style={styles.tagRow}
-                    >
-                      <StyledText
-                        style={[
-                          styles.tagText,
-                          { color: textColor },
-                          selectedTags.has(tag.id) && styles.tagSelected,
-                        ]}
-                      >
-                        {tag.label}
-                      </StyledText>
-                    </HapticPressable>
-                  ))}
-                </View>
-
-                {/* ── Note ── */}
-                <View
-                  style={[styles.sectionHeader, styles.sectionHeaderSpaced]}
-                >
-                  <StyledText
-                    style={[styles.sectionLabel, { color: dimColor }]}
-                  >
-                    note
-                  </StyledText>
-                </View>
-
-                <View style={styles.field}>
-                  <RNTextInput
-                    allowFontScaling={false}
-                    cursorColor={textColor}
-                    multiline
-                    onChangeText={setNote}
-                    placeholder="anything else worth noting"
-                    placeholderTextColor={dimColor}
-                    selectionColor={textColor}
-                    style={[styles.fieldInput, { color: textColor }]}
-                    value={note}
-                  />
-                </View>
-
-                <View style={styles.bottomPad} />
+              {/* ── SECTION: Context ── */}
+              <View style={[styles.sectionHeader, styles.sectionHeaderSpaced]}>
+                <StyledText style={[styles.sectionLabel, { color: textColor }]}>
+                  context
+                </StyledText>
               </View>
-            </Animated.ScrollView>
 
-            {scrollIndicatorHeight > 0 && (
-              <View
-                style={[styles.scrollTrack, { backgroundColor: textColor }]}
-              >
-                <Animated.View
-                  style={[
-                    styles.scrollThumb,
-                    {
-                      backgroundColor: textColor,
-                      height: scrollIndicatorHeight,
-                      transform: [{ translateY: scrollIndicatorPosition }],
-                    },
-                  ]}
+              <View style={styles.tagList}>
+                {TAGS.map((tag) => (
+                  <HapticPressable
+                    key={tag.id}
+                    onPress={() => toggleTag(tag.id)}
+                    style={styles.tagRow}
+                  >
+                    <StyledText
+                      style={[
+                        styles.tagText,
+                        { color: textColor },
+                        selectedTags.has(tag.id) && styles.tagSelected,
+                      ]}
+                    >
+                      {tag.label}
+                    </StyledText>
+                  </HapticPressable>
+                ))}
+              </View>
+
+              {/* ── Note ── */}
+              <View style={[styles.sectionHeader, styles.sectionHeaderSpaced]}>
+                <StyledText style={[styles.sectionLabel, { color: textColor }]}>
+                  note
+                </StyledText>
+              </View>
+
+              <View style={styles.field}>
+                <RNTextInput
+                  allowFontScaling={false}
+                  cursorColor={textColor}
+                  multiline
+                  onChangeText={setNote}
+                  placeholder="anything else worth noting"
+                  placeholderTextColor={textColor}
+                  selectionColor={textColor}
+                  style={[styles.fieldInput, { color: textColor }]}
+                  value={note}
                 />
               </View>
-            )}
-          </View>
-        </TouchableWithoutFeedback>
+
+              <View style={styles.bottomPad} />
+            </View>
+          </Animated.ScrollView>
+
+          {scrollIndicatorHeight > 0 && (
+            <View style={[styles.scrollTrack, { backgroundColor: textColor }]}>
+              <Animated.View
+                style={[
+                  styles.scrollThumb,
+                  {
+                    backgroundColor: textColor,
+                    height: scrollIndicatorHeight,
+                    transform: [{ translateY: scrollIndicatorPosition }],
+                  },
+                ]}
+              />
+            </View>
+          )}
+        </View>
       </KeyboardAvoidingView>
 
       <DatePicker
@@ -461,10 +423,6 @@ const styles = StyleSheet.create({
     fontSize: n(22),
     fontFamily: "PublicSans-Regular",
     paddingVertical: n(2),
-  },
-  divider: {
-    height: 1,
-    marginHorizontal: n(22),
   },
   ratingRow: {
     flexDirection: "row",
