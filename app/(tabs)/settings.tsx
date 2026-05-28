@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HapticPressable } from "@/components/HapticPressable";
 import { Header } from "@/components/Header";
@@ -10,56 +10,45 @@ import { n } from "@/utils/scaling";
 
 export default function SettingsScreen() {
   const { invertColors, setInvertColors } = useInvertColors();
-  const textColor = invertColors ? "black" : "white";
-  const dividerColor = invertColors ? "#DDDDDD" : "#1A1A1A";
+  const bg = invertColors ? "white" : "black";
 
   return (
     <SafeAreaView
       edges={["top"]}
-      style={[
-        styles.container,
-        { backgroundColor: invertColors ? "white" : "black" },
-      ]}
+      style={[styles.container, { backgroundColor: bg }]}
     >
       <Header headerTitle="Settings" hideBackButton />
 
-      <View style={styles.content}>
-        <ToggleSwitch
-          label="Invert Colors"
-          onValueChange={setInvertColors}
-          value={invertColors}
-        />
-
-        <View style={[styles.divider, { backgroundColor: dividerColor }]} />
+      <ScrollView overScrollMode="never" showsVerticalScrollIndicator={false}>
+        <View style={styles.row}>
+          <ToggleSwitch
+            label="Invert Colors"
+            onValueChange={setInvertColors}
+            value={invertColors}
+          />
+        </View>
 
         <HapticPressable
           onPress={() => router.push("/settings/signals")}
           style={styles.row}
         >
-          <StyledText style={[styles.rowLabel, { color: textColor }]}>
-            Signals
-          </StyledText>
+          <StyledText style={styles.rowText}>Signals</StyledText>
         </HapticPressable>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: {
-    paddingHorizontal: n(22),
-    paddingTop: n(16),
-  },
-  divider: {
-    height: 1,
-    marginTop: n(16),
-    marginBottom: n(4),
-  },
   row: {
-    paddingVertical: n(13),
+    alignItems: "flex-start",
+    flexDirection: "column",
+    paddingHorizontal: n(22),
+    paddingVertical: n(16),
   },
-  rowLabel: {
+  rowText: {
     fontSize: n(30),
+    paddingBottom: n(10),
   },
 });
