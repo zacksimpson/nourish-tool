@@ -1,7 +1,7 @@
 import Constants from "expo-constants";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { TextInput as RNTextInput, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Header } from "@/components/Header";
 import { StyledText } from "@/components/StyledText";
@@ -44,7 +44,7 @@ function resolveServing(data: FoodDetail): { scale: number; label: string } {
   if (data.servingSize && data.servingSize > 0) {
     const label = data.householdServingFullText
       ? data.householdServingFullText.toLowerCase()
-      : `${Math.round(data.servingSize)}${data.servingSizeUnit ?? "g"}`;
+      : `serving (${Math.round(data.servingSize)}${data.servingSizeUnit ?? "g"})`;
     return { label, scale: data.servingSize / 100 };
   }
 
@@ -59,7 +59,7 @@ function resolveServing(data: FoodDetail): { scale: number; label: string } {
         unitName && unitName !== "undetermined" && unitName !== "racc";
       label = hasUnit
         ? `${portion.amount} ${portion.measureUnit?.abbreviation ?? portion.measureUnit?.name}`
-        : `${Math.round(portion.gramWeight)}g`;
+        : `serving (${Math.round(portion.gramWeight)}g)`;
     }
     return { label, scale: portion.gramWeight / 100 };
   }
@@ -78,6 +78,10 @@ export default function FoodDetailScreen() {
   const [nutrients, setNutrients] = useState<FoodNutrient[]>([]);
   const [servingScale, setServingScale] = useState<number>(1);
   const [servingLabel, setServingLabel] = useState<string>("100g");
+  const [servingsText, setServingsText] = useState<string>("1");
+
+  const parsed = Number.parseFloat(servingsText);
+  const servings = Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
 
   const handleBack = () => {
     if (router.canGoBack()) {
@@ -86,6 +90,8 @@ export default function FoodDetailScreen() {
   };
 
   useEffect(() => {
+    setServingsText("1");
+
     if (!id) {
       setStatus("error");
       return;
@@ -142,15 +148,33 @@ export default function FoodDetailScreen() {
 
     return (
       <View style={styles.content}>
-        <StyledText style={[styles.perLabel, { color: textColor }]}>
-          per {servingLabel}
-        </StyledText>
+        <View style={styles.servingRow}>
+          <StyledText style={[styles.perLabel, { color: textColor }]}>
+            per {servingLabel}
+          </StyledText>
+          <View style={styles.servingInputGroup}>
+            <RNTextInput
+              allowFontScaling={false}
+              blurOnSubmit
+              cursorColor={textColor}
+              keyboardType="decimal-pad"
+              onChangeText={setServingsText}
+              returnKeyType="done"
+              selectionColor={textColor}
+              style={[styles.servingInput, { color: textColor }]}
+              value={servingsText}
+            />
+            <StyledText style={[styles.servingUnit, { color: textColor }]}>
+              {servings === 1 ? "serving" : "servings"}
+            </StyledText>
+          </View>
+        </View>
         {NUTRIENTS.map((nutrient) => {
           const amount = getNutrientAmount(nutrient.id);
           const display =
             amount === null
               ? "—"
-              : `${Math.round(amount * servingScale)} ${nutrient.unit}`;
+              : `${Math.round(amount * servingScale * servings)} ${nutrient.unit}`;
           return (
             <StyledText
               key={nutrient.id}
@@ -191,11 +215,30 @@ const styles = StyleSheet.create({
     paddingTop: n(24),
     gap: n(16),
   },
+  servingRow: {
+    alignItems: "baseline",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: n(4),
+  },
   perLabel: {
     fontSize: n(13),
     letterSpacing: n(1.5),
     textTransform: "uppercase",
-    marginBottom: n(4),
+  },
+  servingInputGroup: {
+    alignItems: "baseline",
+    flexDirection: "row",
+    gap: n(6),
+  },
+  servingInput: {
+    fontFamily: "PublicSans-Regular",
+    fontSize: n(22),
+    minWidth: n(32),
+    textAlign: "right",
+  },
+  servingUnit: {
+    fontSize: n(13),
   },
   nutrientLine: {
     fontSize: n(22),
