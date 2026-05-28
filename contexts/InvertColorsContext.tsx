@@ -1,6 +1,12 @@
-import { setBackgroundColorAsync } from "expo-system-ui";
-import { createContext, type ReactNode, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { setBackgroundColorAsync } from "expo-system-ui";
+import {
+  createContext,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 interface InvertColorsContextType {
   invertColors: boolean;
@@ -47,7 +53,9 @@ export const InvertColorsProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <InvertColorsContext.Provider value={{ invertColors, loaded, setInvertColors }}>
+    <InvertColorsContext.Provider
+      value={{ invertColors, loaded, setInvertColors }}
+    >
       {children}
     </InvertColorsContext.Provider>
   );
