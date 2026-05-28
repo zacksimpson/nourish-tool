@@ -23,7 +23,7 @@ export function Navbar({ currentScreenName, navigation }: NavbarProps) {
   return (
     <View style={[styles.navbar, { backgroundColor: bg }]}>
       <HapticPressable onPress={() => router.push("/settings")}>
-        <SettingsIcon color={textColor} />
+        <SettingsIcon color={textColor} size={40} />
       </HapticPressable>
 
       <HapticPressable
@@ -35,7 +35,7 @@ export function Navbar({ currentScreenName, navigation }: NavbarProps) {
       </HapticPressable>
 
       <HapticPressable onPress={() => router.push("/search")}>
-        <MaterialIcons color={textColor} name="search" size={n(48)} />
+        <MaterialIcons color={textColor} name="search" size={n(40)} />
       </HapticPressable>
     </View>
   );
