@@ -17,6 +17,7 @@ import { n } from "@/utils/scaling";
 const USDA_BASE = "https://api.nal.usda.gov/fdc/v1";
 
 interface FoodResult {
+  brandOwner?: string;
   dataType: string;
   description: string;
   fdcId: number;
@@ -57,7 +58,7 @@ export default function SearchResultsScreen() {
 
     const apiKey =
       (Constants.expoConfig?.extra?.usdaApiKey as string | undefined) ?? "";
-    const url = `${USDA_BASE}/foods/search?query=${encodeURIComponent(query)}&dataType=Foundation,SR+Legacy&pageSize=25&api_key=${apiKey}`;
+    const url = `${USDA_BASE}/foods/search?query=${encodeURIComponent(query)}&dataType=Foundation,Branded&pageSize=25&api_key=${apiKey}`;
 
     setStatus("loading");
 
@@ -145,7 +146,7 @@ export default function SearchResultsScreen() {
                   numberOfLines={1}
                   style={[styles.foodCategory, { color: textColor }]}
                 >
-                  {food.foodCategory ?? food.dataType}
+                  {food.brandOwner ?? food.foodCategory ?? food.dataType}
                 </StyledText>
               </HapticPressable>
             ))}
