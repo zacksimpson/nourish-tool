@@ -23,6 +23,13 @@ interface FoodNutrient {
   nutrient: { id: number };
 }
 
+interface FoodDetail {
+  foodNutrients: FoodNutrient[];
+  householdServingFullText?: string;
+  servingSize?: number;
+  servingSizeUnit?: string;
+}
+
 type Status = "loading" | "success" | "error";
 
 export default function FoodDetailScreen() {
@@ -34,6 +41,8 @@ export default function FoodDetailScreen() {
 
   const [status, setStatus] = useState<Status>("loading");
   const [nutrients, setNutrients] = useState<FoodNutrient[]>([]);
+  const [servingScale, setServingScale] = useState<number>(1);
+  const [servingLabel, setServingLabel] = useState<string>("100g");
 
   const handleBack = () => {
     if (router.canGoBack()) {
@@ -56,10 +65,22 @@ export default function FoodDetailScreen() {
         if (!res.ok) {
           throw new Error("Not found");
         }
-        return res.json() as Promise<{ foodNutrients: FoodNutrient[] }>;
+        return res.json() as Promise<FoodDetail>;
       })
       .then((data) => {
         setNutrients(data.foodNutrients ?? []);
+
+        if (data.servingSize && data.servingSize > 0) {
+          setServingScale(data.servingSize / 100);
+          if (data.householdServingFullText) {
+            setServingLabel(data.householdServingFullText.toLowerCase());
+          } else {
+            setServingLabel(
+              `${Math.round(data.servingSize)}${data.servingSizeUnit ?? "g"}`
+            );
+          }
+        }
+
         setStatus("success");
       })
       .catch(() => {
@@ -96,12 +117,14 @@ export default function FoodDetailScreen() {
     return (
       <View style={styles.content}>
         <StyledText style={[styles.perLabel, { color: textColor }]}>
-          per 100g
+          per {servingLabel}
         </StyledText>
         {NUTRIENTS.map((nutrient) => {
           const amount = getNutrientAmount(nutrient.id);
           const display =
-            amount === null ? "—" : `${Math.round(amount)} ${nutrient.unit}`;
+            amount === null
+              ? "—"
+              : `${Math.round(amount * servingScale)} ${nutrient.unit}`;
           return (
             <StyledText
               key={nutrient.id}
