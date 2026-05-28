@@ -49,8 +49,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: n(20),
   },
   centerLabel: {
-    fontSize: n(22),
-    letterSpacing: n(1.5),
+    fontSize: n(23),
+    letterSpacing: n(3),
     textTransform: "uppercase",
   },
 });
