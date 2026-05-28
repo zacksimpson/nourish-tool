@@ -12,6 +12,7 @@ import {
 } from "@/hooks/useScrollIndicator";
 import { formatDate } from "@/utils/formatDate";
 import { n } from "@/utils/scaling";
+import { getTagLabel } from "@/utils/tags";
 
 export default function EntryDetailScreen() {
   const { invertColors } = useInvertColors();
@@ -127,7 +128,7 @@ export default function EntryDetailScreen() {
               {entry.tags.length > 0 && (
                 <View style={styles.field}>
                   <StyledText style={[styles.fieldValue, { color: textColor }]}>
-                    {entry.tags.join(", ")}
+                    {entry.tags.map((id) => getTagLabel(id)).join(", ")}
                   </StyledText>
                 </View>
               )}
