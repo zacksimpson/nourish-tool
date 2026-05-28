@@ -3,6 +3,7 @@ import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Header } from "@/components/Header";
+import { SwipeBackContainer } from "@/components/SwipeBackContainer";
 import { TextInput } from "@/components/TextInput";
 import { useInvertColors } from "@/contexts/InvertColorsContext";
 import { n } from "@/utils/scaling";
@@ -13,6 +14,12 @@ export default function SearchScreen() {
 
   const [query, setQuery] = useState("");
 
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    }
+  };
+
   const handleSearch = () => {
     const trimmed = query.trim();
     if (trimmed.length > 0) {
@@ -21,29 +28,30 @@ export default function SearchScreen() {
   };
 
   return (
-    <SafeAreaView
-      edges={["top"]}
-      style={[styles.container, { backgroundColor: bg }]}
-    >
-      <Header
-        headerTitle="Search"
-        hideBackButton
-        rightAction={{
-          icon: "search",
-          onPress: handleSearch,
-          show: query.length > 0,
-        }}
-      />
-      <View style={styles.inputWrapper}>
-        <TextInput
-          autoFocus
-          onChangeText={setQuery}
-          onSubmit={handleSearch}
-          placeholder="search foods..."
-          value={query}
+    <SwipeBackContainer enabled onSwipeBack={handleBack}>
+      <SafeAreaView
+        edges={["top"]}
+        style={[styles.container, { backgroundColor: bg }]}
+      >
+        <Header
+          headerTitle="Search"
+          rightAction={{
+            icon: "search",
+            onPress: handleSearch,
+            show: query.length > 0,
+          }}
         />
-      </View>
-    </SafeAreaView>
+        <View style={styles.inputWrapper}>
+          <TextInput
+            autoFocus
+            onChangeText={setQuery}
+            onSubmit={handleSearch}
+            placeholder="search foods..."
+            value={query}
+          />
+        </View>
+      </SafeAreaView>
+    </SwipeBackContainer>
   );
 }
 

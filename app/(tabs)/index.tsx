@@ -1,4 +1,3 @@
-import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -9,7 +8,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { DatePicker } from "@/components/DatePicker";
 import { HapticPressable } from "@/components/HapticPressable";
 import { Header } from "@/components/Header";
 import { StyledText } from "@/components/StyledText";
@@ -62,34 +60,6 @@ export default function LogScreen() {
     setContentHeight,
     setScrollViewHeight,
   } = useScrollIndicator();
-
-  // Date picker modal state
-  const [pickerVisible, setPickerVisible] = useState(false);
-  const [viewYear, setViewYear] = useState(() => new Date().getFullYear());
-  const [viewMonth, setViewMonth] = useState(() => new Date().getMonth());
-
-  const handlePrevMonth = () => {
-    if (viewMonth === 0) {
-      setViewYear((y) => y - 1);
-      setViewMonth(11);
-    } else {
-      setViewMonth((m) => m - 1);
-    }
-  };
-
-  const handleNextMonth = () => {
-    if (viewMonth === 11) {
-      setViewYear((y) => y + 1);
-      setViewMonth(0);
-    } else {
-      setViewMonth((m) => m + 1);
-    }
-  };
-
-  const handleSelectDate = (date: string) => {
-    setPickerVisible(false);
-    router.push({ pathname: "/entry/[date]", params: { date } });
-  };
 
   // Check-in form state
   const [breakfast, setBreakfast] = useState("");
@@ -165,7 +135,6 @@ export default function LogScreen() {
       <Header
         headerTitle="Nourish"
         hideBackButton
-        leftAction={{ icon: "history", onPress: () => setPickerVisible(true) }}
         rightAction={{ icon: "check", onPress: handleSave }}
       />
 
@@ -354,16 +323,6 @@ export default function LogScreen() {
           )}
         </View>
       </KeyboardAvoidingView>
-
-      <DatePicker
-        onDismiss={() => setPickerVisible(false)}
-        onNextMonth={handleNextMonth}
-        onPrevMonth={handlePrevMonth}
-        onSelect={handleSelectDate}
-        viewMonth={viewMonth}
-        viewYear={viewYear}
-        visible={pickerVisible}
-      />
     </SafeAreaView>
   );
 }
