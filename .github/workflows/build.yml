@@ -52,7 +52,7 @@ jobs:
 
       - name: Download APK from EAS
         run: |
-          BUILD_URL=$(eas build:list --platform android --limit 1 --json --non-interactive | jq -r '.[0].artifacts.buildUrl')
+          BUILD_URL=$(eas build:list --platform android --limit 1 --status finished --json --non-interactive | jq -r --arg id "7a9a2040-b4a5-4c3d-b087-28cf3c153ae2" '[.[] | select(.project.id == $id)][0].artifacts.buildUrl')
           curl -L "$BUILD_URL" -o "${{ github.workspace }}/${{ env.APP_NAME }}_${{ env.VERSION }}.apk"
 
       - name: Generate changelog
