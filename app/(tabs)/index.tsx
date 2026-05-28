@@ -279,7 +279,7 @@ export default function LogScreen() {
                   context:
                 </StyledText>
                 <StyledText style={[styles.fieldInput, { color: textColor }]}>
-                  {contextDisplay ?? "—"}
+                  {contextDisplay ?? "Add context tags"}
                 </StyledText>
               </HapticPressable>
 

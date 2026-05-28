@@ -34,7 +34,7 @@ export default function SearchScreen() {
         style={[styles.container, { backgroundColor: bg }]}
       >
         <Header
-          headerTitle="Search"
+          headerTitle="Nutrition Lookup"
           rightAction={{
             icon: "search",
             onPress: handleSearch,
@@ -58,7 +58,7 @@ export default function SearchScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   inputWrapper: {
-    paddingHorizontal: n(22),
-    paddingTop: n(16),
+    paddingHorizontal: n(28),
+    paddingTop: n(48),
   },
 });

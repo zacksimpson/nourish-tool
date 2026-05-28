@@ -58,7 +58,7 @@ export default function ContextPickerScreen() {
         edges={["top"]}
         style={[styles.container, { backgroundColor: bg }]}
       >
-        <Header headerTitle="context" />
+        <Header headerTitle="context tags" />
 
         <View style={styles.scrollWrapper}>
           <Animated.ScrollView
