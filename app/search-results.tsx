@@ -16,6 +16,10 @@ import { n } from "@/utils/scaling";
 
 const USDA_BASE = "https://api.nal.usda.gov/fdc/v1";
 
+function toTitleCase(str: string): string {
+  return str.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 interface FoodResult {
   brandOwner?: string;
   dataType: string;
@@ -58,7 +62,7 @@ export default function SearchResultsScreen() {
 
     const apiKey =
       (Constants.expoConfig?.extra?.usdaApiKey as string | undefined) ?? "";
-    const url = `${USDA_BASE}/foods/search?query=${encodeURIComponent(query)}&dataType=Foundation,Branded&pageSize=25&api_key=${apiKey}`;
+    const url = `${USDA_BASE}/foods/search?query=${encodeURIComponent(query)}&dataType=SR+Legacy,Branded&pageSize=25&api_key=${apiKey}`;
 
     setStatus("loading");
 
@@ -83,10 +87,10 @@ export default function SearchResultsScreen() {
             return true;
           });
           const sorted = [...deduped].sort((a, b) => {
-            if (a.dataType === "Foundation" && b.dataType !== "Foundation") {
+            if (a.dataType === "SR Legacy" && b.dataType !== "SR Legacy") {
               return -1;
             }
-            if (a.dataType !== "Foundation" && b.dataType === "Foundation") {
+            if (a.dataType !== "SR Legacy" && b.dataType === "SR Legacy") {
               return 1;
             }
             return 0;
@@ -103,7 +107,7 @@ export default function SearchResultsScreen() {
   const handleSelectFood = (food: FoodResult) => {
     router.push({
       pathname: "/food/[id]",
-      params: { id: String(food.fdcId), name: food.description },
+      params: { id: String(food.fdcId), name: toTitleCase(food.description) },
     });
   };
 
@@ -158,7 +162,7 @@ export default function SearchResultsScreen() {
                   numberOfLines={1}
                   style={[styles.foodName, { color: textColor }]}
                 >
-                  {food.description}
+                  {toTitleCase(food.description)}
                 </StyledText>
                 <StyledText
                   numberOfLines={1}
