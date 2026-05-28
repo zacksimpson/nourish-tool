@@ -2,10 +2,11 @@ import { MaterialIcons } from "@expo/vector-icons";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { router } from "expo-router";
 import { StyleSheet, View } from "react-native";
+import { HapticPressable } from "@/components/HapticPressable";
+import { SettingsIcon } from "@/components/SettingsIcon";
 import { StyledText } from "@/components/StyledText";
 import { useInvertColors } from "@/contexts/InvertColorsContext";
 import { n } from "@/utils/scaling";
-import { HapticPressable } from "./HapticPressable";
 
 interface NavbarProps {
   currentScreenName: string;
@@ -22,7 +23,7 @@ export function Navbar({ currentScreenName, navigation }: NavbarProps) {
   return (
     <View style={[styles.navbar, { backgroundColor: bg }]}>
       <HapticPressable onPress={() => router.push("/settings")}>
-        <MaterialIcons color={textColor} name="settings" size={n(48)} />
+        <SettingsIcon color={textColor} />
       </HapticPressable>
 
       <HapticPressable
