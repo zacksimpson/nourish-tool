@@ -29,7 +29,7 @@ export function Navbar({ currentScreenName, navigation }: NavbarProps) {
         onPress={() => navigation.navigate(isOnHistory ? "index" : "history")}
       >
         <StyledText style={[styles.centerLabel, { color: textColor }]}>
-          {isOnHistory ? "today" : "view logs"}
+          {isOnHistory ? "view today" : "view logs"}
         </StyledText>
       </HapticPressable>
 
