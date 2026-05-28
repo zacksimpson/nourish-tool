@@ -15,17 +15,20 @@ import { n } from "@/utils/scaling";
 
 const SIGNAL_UNITS: Record<SignalId, string> = {
   calories: "kcal",
-  protein: "g",
   carbs: "g",
   fat: "g",
+  protein: "g",
 };
+
+const CIRCLE_DIAMETER = n(9.8);
+const CIRCLE_BORDER = n(2.5);
+const LINE_WIDTH = n(14.5);
+const LINE_HEIGHT = n(2.22);
 
 export default function SignalsScreen() {
   const { invertColors } = useInvertColors();
   const bg = invertColors ? "white" : "black";
   const textColor = invertColors ? "black" : "white";
-  const dimColor = invertColors ? "#AAAAAA" : "#555555";
-  const dividerColor = invertColors ? "#DDDDDD" : "#1A1A1A";
 
   const { signals, targets, saveSignals, saveTargets } = useNourish();
 
@@ -63,61 +66,73 @@ export default function SignalsScreen() {
         <Header headerTitle="Signals" />
 
         <View style={styles.content}>
-          {SIGNAL_OPTIONS.map((signal, index) => {
+          {SIGNAL_OPTIONS.map((signal) => {
             const isSelected = signals.includes(signal.id);
             const atLimit = signals.length >= 3 && !isSelected;
             const target = targets[signal.id];
 
             return (
-              <View key={signal.id}>
-                {index > 0 && (
-                  <View
-                    style={[styles.divider, { backgroundColor: dividerColor }]}
-                  />
-                )}
-                <View style={styles.row}>
-                  <HapticPressable
-                    onPress={() => {
-                      if (!atLimit) {
-                        toggleSignal(signal.id);
-                      }
-                    }}
-                    style={styles.labelPressable}
-                  >
-                    <StyledText
-                      style={[
-                        styles.label,
-                        { color: atLimit ? dimColor : textColor },
-                        isSelected && styles.labelSelected,
-                      ]}
-                    >
-                      {signal.label}
-                    </StyledText>
-                  </HapticPressable>
+              <View key={signal.id} style={styles.row}>
+                <HapticPressable
+                  onPress={() => {
+                    if (!atLimit) {
+                      toggleSignal(signal.id);
+                    }
+                  }}
+                  style={styles.toggleAndLabel}
+                >
+                  <View style={styles.toggleGraphic}>
+                    {isSelected ? (
+                      <>
+                        <View
+                          style={[styles.line, { backgroundColor: textColor }]}
+                        />
+                        <View
+                          style={[
+                            styles.circle,
+                            { backgroundColor: textColor },
+                          ]}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <View
+                          style={[
+                            styles.hollowCircle,
+                            { borderColor: textColor },
+                          ]}
+                        />
+                        <View
+                          style={[styles.line, { backgroundColor: textColor }]}
+                        />
+                      </>
+                    )}
+                  </View>
+                  <StyledText style={[styles.label, { color: textColor }]}>
+                    {signal.label}
+                  </StyledText>
+                </HapticPressable>
 
-                  {isSelected && (
-                    <View style={styles.targetContainer}>
-                      <RNTextInput
-                        allowFontScaling={false}
-                        cursorColor={textColor}
-                        defaultValue={
-                          target === undefined ? "" : String(target)
-                        }
-                        keyboardType="numeric"
-                        onEndEditing={(e) =>
-                          handleTargetChange(signal.id, e.nativeEvent.text)
-                        }
-                        placeholder="—"
-                        placeholderTextColor={dimColor}
-                        selectionColor={textColor}
-                        style={[styles.targetInput, { color: textColor }]}
-                      />
-                      <StyledText style={[styles.unit, { color: dimColor }]}>
-                        {SIGNAL_UNITS[signal.id]}
-                      </StyledText>
-                    </View>
-                  )}
-                </View>
+                {isSelected && (
+                  <View style={styles.targetContainer}>
+                    <RNTextInput
+                      allowFontScaling={false}
+                      cursorColor={textColor}
+                      defaultValue={target === undefined ? "" : String(target)}
+                      keyboardType="numeric"
+                      onEndEditing={(e) =>
+                        handleTargetChange(signal.id, e.nativeEvent.text)
+                      }
+                      placeholder="—"
+                      placeholderTextColor={textColor}
+                      selectionColor={textColor}
+                      style={[styles.targetInput, { color: textColor }]}
+                    />
+                    <StyledText style={[styles.unit, { color: textColor }]}>
+                      {SIGNAL_UNITS[signal.id]}
+                    </StyledText>
+                  </View>
+                )}
               </View>
             );
           })}
@@ -132,33 +147,50 @@ const styles = StyleSheet.create({
   content: {
     paddingTop: n(8),
   },
-  divider: {
-    height: 1,
-    marginHorizontal: n(22),
-  },
   row: {
-    flexDirection: "row",
     alignItems: "center",
+    flexDirection: "row",
     paddingHorizontal: n(22),
     paddingVertical: n(16),
   },
-  labelPressable: {
+  toggleAndLabel: {
+    alignItems: "center",
     flex: 1,
+    flexDirection: "row",
+  },
+  toggleGraphic: {
+    alignItems: "center",
+    flexDirection: "row",
+    marginLeft: n(8.5),
+    marginRight: n(20),
+    marginTop: n(13),
+  },
+  circle: {
+    borderRadius: CIRCLE_DIAMETER / 2,
+    height: CIRCLE_DIAMETER,
+    width: CIRCLE_DIAMETER,
+  },
+  hollowCircle: {
+    borderRadius: CIRCLE_DIAMETER / 2,
+    borderWidth: CIRCLE_BORDER,
+    height: CIRCLE_DIAMETER,
+    width: CIRCLE_DIAMETER,
+  },
+  line: {
+    height: LINE_HEIGHT,
+    width: LINE_WIDTH,
   },
   label: {
     fontSize: n(30),
   },
-  labelSelected: {
-    textDecorationLine: "underline",
-  },
   targetContainer: {
-    flexDirection: "row",
     alignItems: "baseline",
+    flexDirection: "row",
     gap: n(6),
   },
   targetInput: {
-    fontSize: n(22),
     fontFamily: "PublicSans-Regular",
+    fontSize: n(22),
     minWidth: n(52),
     textAlign: "right",
   },

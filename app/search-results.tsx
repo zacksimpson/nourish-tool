@@ -29,7 +29,6 @@ export default function SearchResultsScreen() {
   const { invertColors } = useInvertColors();
   const bg = invertColors ? "white" : "black";
   const textColor = invertColors ? "black" : "white";
-  const dimColor = invertColors ? "#AAAAAA" : "#555555";
 
   const { query } = useLocalSearchParams<{ query: string }>();
 
@@ -93,7 +92,7 @@ export default function SearchResultsScreen() {
     if (status === "loading") {
       return (
         <View style={styles.stateContainer}>
-          <StyledText style={[styles.stateText, { color: dimColor }]}>
+          <StyledText style={[styles.stateText, { color: textColor }]}>
             searching...
           </StyledText>
         </View>
@@ -103,7 +102,7 @@ export default function SearchResultsScreen() {
     if (status === "error") {
       return (
         <View style={styles.stateContainer}>
-          <StyledText style={[styles.stateText, { color: dimColor }]}>
+          <StyledText style={[styles.stateText, { color: textColor }]}>
             something went wrong
           </StyledText>
         </View>
@@ -113,7 +112,7 @@ export default function SearchResultsScreen() {
     if (status === "empty") {
       return (
         <View style={styles.stateContainer}>
-          <StyledText style={[styles.stateText, { color: dimColor }]}>
+          <StyledText style={[styles.stateText, { color: textColor }]}>
             no results
           </StyledText>
         </View>
