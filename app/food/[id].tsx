@@ -50,9 +50,16 @@ function resolveServing(data: FoodDetail): { scale: number; label: string } {
 
   const portion = data.foodPortions?.[0];
   if (portion && portion.gramWeight > 0) {
-    const label = portion.portionDescription
-      ? portion.portionDescription.toLowerCase()
-      : `${portion.amount} ${portion.measureUnit?.abbreviation ?? portion.measureUnit?.name ?? "serving"}`;
+    let label: string;
+    if (portion.portionDescription) {
+      label = portion.portionDescription.toLowerCase();
+    } else {
+      const unitName = portion.measureUnit?.name?.toLowerCase();
+      const hasUnit = unitName && unitName !== "undetermined";
+      label = hasUnit
+        ? `${portion.amount} ${portion.measureUnit?.abbreviation ?? portion.measureUnit?.name}`
+        : `${Math.round(portion.gramWeight)}g`;
+    }
     return { label, scale: portion.gramWeight / 100 };
   }
 
