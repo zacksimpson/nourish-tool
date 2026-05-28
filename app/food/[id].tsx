@@ -23,14 +23,41 @@ interface FoodNutrient {
   nutrient: { id: number };
 }
 
+interface FoodPortion {
+  amount: number;
+  gramWeight: number;
+  measureUnit?: { abbreviation: string; name: string };
+  portionDescription?: string;
+}
+
 interface FoodDetail {
   foodNutrients: FoodNutrient[];
+  foodPortions?: FoodPortion[];
   householdServingFullText?: string;
   servingSize?: number;
   servingSizeUnit?: string;
 }
 
 type Status = "loading" | "success" | "error";
+
+function resolveServing(data: FoodDetail): { scale: number; label: string } {
+  if (data.servingSize && data.servingSize > 0) {
+    const label = data.householdServingFullText
+      ? data.householdServingFullText.toLowerCase()
+      : `${Math.round(data.servingSize)}${data.servingSizeUnit ?? "g"}`;
+    return { label, scale: data.servingSize / 100 };
+  }
+
+  const portion = data.foodPortions?.[0];
+  if (portion && portion.gramWeight > 0) {
+    const label = portion.portionDescription
+      ? portion.portionDescription.toLowerCase()
+      : `${portion.amount} ${portion.measureUnit?.abbreviation ?? portion.measureUnit?.name ?? "serving"}`;
+    return { label, scale: portion.gramWeight / 100 };
+  }
+
+  return { label: "100g", scale: 1 };
+}
 
 export default function FoodDetailScreen() {
   const { invertColors } = useInvertColors();
@@ -69,18 +96,9 @@ export default function FoodDetailScreen() {
       })
       .then((data) => {
         setNutrients(data.foodNutrients ?? []);
-
-        if (data.servingSize && data.servingSize > 0) {
-          setServingScale(data.servingSize / 100);
-          if (data.householdServingFullText) {
-            setServingLabel(data.householdServingFullText.toLowerCase());
-          } else {
-            setServingLabel(
-              `${Math.round(data.servingSize)}${data.servingSizeUnit ?? "g"}`
-            );
-          }
-        }
-
+        const { scale, label } = resolveServing(data);
+        setServingScale(scale);
+        setServingLabel(label);
         setStatus("success");
       })
       .catch(() => {
