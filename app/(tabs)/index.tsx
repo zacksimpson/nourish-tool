@@ -186,13 +186,6 @@ export default function LogScreen() {
             <View
               onLayout={(e) => setContentHeight(e.nativeEvent.layout.height)}
             >
-              {/* ── SECTION: What you ate ── */}
-              <View style={styles.sectionHeader}>
-                <StyledText style={[styles.sectionLabel, { color: textColor }]}>
-                  what you ate
-                </StyledText>
-              </View>
-
               <View style={styles.field}>
                 <StyledText style={[styles.fieldLabel, { color: textColor }]}>
                   breakfast
@@ -269,19 +262,6 @@ export default function LogScreen() {
                 />
               </View>
 
-              {/* ── SECTION: How it went ── */}
-              {enabledSignals.length > 0 && (
-                <View
-                  style={[styles.sectionHeader, styles.sectionHeaderSpaced]}
-                >
-                  <StyledText
-                    style={[styles.sectionLabel, { color: textColor }]}
-                  >
-                    how it went
-                  </StyledText>
-                </View>
-              )}
-
               {enabledSignals.map((signalId) => {
                 const label =
                   SIGNAL_OPTIONS.find((s) => s.id === signalId)?.label ??
@@ -318,13 +298,6 @@ export default function LogScreen() {
                 );
               })}
 
-              {/* ── SECTION: Context ── */}
-              <View style={[styles.sectionHeader, styles.sectionHeaderSpaced]}>
-                <StyledText style={[styles.sectionLabel, { color: textColor }]}>
-                  context
-                </StyledText>
-              </View>
-
               <View style={styles.tagList}>
                 {TAGS.map((tag) => (
                   <HapticPressable
@@ -343,13 +316,6 @@ export default function LogScreen() {
                     </StyledText>
                   </HapticPressable>
                 ))}
-              </View>
-
-              {/* ── Note ── */}
-              <View style={[styles.sectionHeader, styles.sectionHeaderSpaced]}>
-                <StyledText style={[styles.sectionLabel, { color: textColor }]}>
-                  note
-                </StyledText>
               </View>
 
               <View style={styles.field}>
@@ -408,19 +374,6 @@ const styles = StyleSheet.create({
   scrollWrapper: { flex: 1, flexDirection: "row", position: "relative" },
   scrollTrack: scrollIndicatorBaseStyles.track,
   scrollThumb: scrollIndicatorBaseStyles.thumb,
-  sectionHeader: {
-    paddingHorizontal: n(22),
-    paddingTop: n(16),
-    paddingBottom: n(4),
-  },
-  sectionHeaderSpaced: {
-    paddingTop: n(32),
-  },
-  sectionLabel: {
-    fontSize: n(13),
-    letterSpacing: n(1.5),
-    textTransform: "uppercase",
-  },
   field: {
     paddingHorizontal: n(22),
     paddingVertical: n(13),
