@@ -1,4 +1,4 @@
-const { createCanvas, registerFont } = require("canvas");
+const { createCanvas, GlobalFonts } = require("@napi-rs/canvas");
 const fs = require("node:fs");
 const path = require("node:path");
 
@@ -6,7 +6,7 @@ const fontPath = path.join(
   import.meta.dirname,
   "../assets/fonts/PublicSans-Regular.ttf"
 );
-registerFont(fontPath, { family: "PublicSans" });
+GlobalFonts.registerFromPath(fontPath, "PublicSans");
 
 const appConfig = JSON.parse(fs.readFileSync("app.json", "utf8"));
 const appName = appConfig.expo.name;
