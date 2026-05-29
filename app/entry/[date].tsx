@@ -1,24 +1,15 @@
 import { useFocusEffect } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import { useCallback, useMemo, useRef, useState } from "react";
-import {
-  Animated,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { EntryForm, type SignalRating } from "@/components/EntryForm";
 import { Header } from "@/components/Header";
+import { ScrollViewWithIndicator } from "@/components/ScrollViewWithIndicator";
 import { StyledText } from "@/components/StyledText";
 import { useInvertColors } from "@/contexts/InvertColorsContext";
 import { SIGNAL_OPTIONS, useNourish } from "@/contexts/NourishContext";
-import {
-  scrollIndicatorBaseStyles,
-  useScrollIndicator,
-} from "@/hooks/useScrollIndicator";
 import { consumeResult } from "@/utils/contextPickerStore";
 import { formatDateShort } from "@/utils/formatDate";
 import { n } from "@/utils/scaling";
@@ -45,14 +36,6 @@ export default function EntryDetailScreen() {
   currentDateRef.current = currentDate;
 
   const currentEntry = entries[currentDate];
-
-  const {
-    handleScroll,
-    scrollIndicatorHeight,
-    scrollIndicatorPosition,
-    setContentHeight,
-    setScrollViewHeight,
-  } = useScrollIndicator();
 
   const [isEditing, setIsEditing] = useState(false);
   const isEditingRef = useRef(isEditing);
@@ -151,56 +134,29 @@ export default function EntryDetailScreen() {
           behavior={Platform.OS === "android" ? "height" : "padding"}
           style={styles.flex}
         >
-          <View style={styles.scrollWrapper}>
-            <Animated.ScrollView
-              keyboardDismissMode="on-drag"
-              keyboardShouldPersistTaps="handled"
-              onLayout={(e) => setScrollViewHeight(e.nativeEvent.layout.height)}
-              onScroll={handleScroll}
-              overScrollMode="never"
-              scrollEventThrottle={16}
-              showsVerticalScrollIndicator={false}
-            >
-              <View
-                onLayout={(e) => setContentHeight(e.nativeEvent.layout.height)}
-              >
-                <EntryForm
-                  breakfast={editBreakfast}
-                  dinner={editDinner}
-                  enabledSignals={enabledSignals}
-                  lunch={editLunch}
-                  note={editNote}
-                  onBreakfastChange={setEditBreakfast}
-                  onDinnerChange={setEditDinner}
-                  onLunchChange={setEditLunch}
-                  onNoteChange={setEditNote}
-                  onSnacksChange={setEditSnacks}
-                  onToggleSignal={toggleSignal}
-                  selectedTags={editSelectedTags}
-                  signalRatings={editSignalRatings}
-                  snacks={editSnacks}
-                  textColor={textColor}
-                />
-              </View>
-            </Animated.ScrollView>
-
-            {scrollIndicatorHeight > 0 && (
-              <View
-                style={[styles.scrollTrack, { backgroundColor: textColor }]}
-              >
-                <Animated.View
-                  style={[
-                    styles.scrollThumb,
-                    {
-                      backgroundColor: textColor,
-                      height: scrollIndicatorHeight,
-                      transform: [{ translateY: scrollIndicatorPosition }],
-                    },
-                  ]}
-                />
-              </View>
-            )}
-          </View>
+          <ScrollViewWithIndicator
+            keyboardDismissMode="on-drag"
+            keyboardShouldPersistTaps="handled"
+            textColor={textColor}
+          >
+            <EntryForm
+              breakfast={editBreakfast}
+              dinner={editDinner}
+              enabledSignals={enabledSignals}
+              lunch={editLunch}
+              note={editNote}
+              onBreakfastChange={setEditBreakfast}
+              onDinnerChange={setEditDinner}
+              onLunchChange={setEditLunch}
+              onNoteChange={setEditNote}
+              onSnacksChange={setEditSnacks}
+              onToggleSignal={toggleSignal}
+              selectedTags={editSelectedTags}
+              signalRatings={editSignalRatings}
+              snacks={editSnacks}
+              textColor={textColor}
+            />
+          </ScrollViewWithIndicator>
         </KeyboardAvoidingView>
       );
     }
@@ -220,106 +176,80 @@ export default function EntryDetailScreen() {
     );
 
     return (
-      <View style={styles.scrollWrapper}>
-        <Animated.ScrollView
-          onLayout={(e) => setScrollViewHeight(e.nativeEvent.layout.height)}
-          onScroll={handleScroll}
-          overScrollMode="never"
-          scrollEventThrottle={16}
-          showsVerticalScrollIndicator={false}
-        >
-          <View
-            onLayout={(e) => setContentHeight(e.nativeEvent.layout.height)}
-            style={styles.content}
-          >
-            <View style={styles.field}>
-              <StyledText style={[styles.fieldLabel, { color: textColor }]}>
-                breakfast
-              </StyledText>
-              <StyledText style={[styles.fieldValue, { color: textColor }]}>
-                {currentEntry.breakfast || "—"}
-              </StyledText>
-            </View>
-
-            <View style={styles.field}>
-              <StyledText style={[styles.fieldLabel, { color: textColor }]}>
-                lunch
-              </StyledText>
-              <StyledText style={[styles.fieldValue, { color: textColor }]}>
-                {currentEntry.lunch || "—"}
-              </StyledText>
-            </View>
-
-            <View style={styles.field}>
-              <StyledText style={[styles.fieldLabel, { color: textColor }]}>
-                dinner
-              </StyledText>
-              <StyledText style={[styles.fieldValue, { color: textColor }]}>
-                {currentEntry.dinner || "—"}
-              </StyledText>
-            </View>
-
-            <View style={styles.field}>
-              <StyledText style={[styles.fieldLabel, { color: textColor }]}>
-                snacks
-              </StyledText>
-              <StyledText style={[styles.fieldValue, { color: textColor }]}>
-                {currentEntry.snacks || "—"}
-              </StyledText>
-            </View>
-
-            {ratedSignals.map((signal) => (
-              <View key={signal.id} style={styles.field}>
-                <StyledText style={[styles.fieldLabel, { color: textColor }]}>
-                  {signal.label}
-                </StyledText>
-                <StyledText style={[styles.fieldValue, { color: textColor }]}>
-                  {currentEntry.signals[signal.id]}
-                </StyledText>
-              </View>
-            ))}
-
-            {currentEntry.tags.length > 0 && (
-              <View style={styles.field}>
-                <StyledText style={[styles.fieldLabel, { color: textColor }]}>
-                  context
-                </StyledText>
-                <StyledText style={[styles.fieldValue, { color: textColor }]}>
-                  {currentEntry.tags.map((id) => getTagLabel(id)).join(", ")}
-                </StyledText>
-              </View>
-            )}
-
-            {currentEntry.note.length > 0 && (
-              <View style={styles.field}>
-                <StyledText style={[styles.fieldLabel, { color: textColor }]}>
-                  notes
-                </StyledText>
-                <StyledText style={[styles.fieldValue, { color: textColor }]}>
-                  {currentEntry.note}
-                </StyledText>
-              </View>
-            )}
-
-            <View style={styles.bottomPad} />
+      <ScrollViewWithIndicator textColor={textColor}>
+        <View style={styles.content}>
+          <View style={styles.field}>
+            <StyledText style={[styles.fieldLabel, { color: textColor }]}>
+              breakfast
+            </StyledText>
+            <StyledText style={[styles.fieldValue, { color: textColor }]}>
+              {currentEntry.breakfast || "—"}
+            </StyledText>
           </View>
-        </Animated.ScrollView>
 
-        {scrollIndicatorHeight > 0 && (
-          <View style={[styles.scrollTrack, { backgroundColor: textColor }]}>
-            <Animated.View
-              style={[
-                styles.scrollThumb,
-                {
-                  backgroundColor: textColor,
-                  height: scrollIndicatorHeight,
-                  transform: [{ translateY: scrollIndicatorPosition }],
-                },
-              ]}
-            />
+          <View style={styles.field}>
+            <StyledText style={[styles.fieldLabel, { color: textColor }]}>
+              lunch
+            </StyledText>
+            <StyledText style={[styles.fieldValue, { color: textColor }]}>
+              {currentEntry.lunch || "—"}
+            </StyledText>
           </View>
-        )}
-      </View>
+
+          <View style={styles.field}>
+            <StyledText style={[styles.fieldLabel, { color: textColor }]}>
+              dinner
+            </StyledText>
+            <StyledText style={[styles.fieldValue, { color: textColor }]}>
+              {currentEntry.dinner || "—"}
+            </StyledText>
+          </View>
+
+          <View style={styles.field}>
+            <StyledText style={[styles.fieldLabel, { color: textColor }]}>
+              snacks
+            </StyledText>
+            <StyledText style={[styles.fieldValue, { color: textColor }]}>
+              {currentEntry.snacks || "—"}
+            </StyledText>
+          </View>
+
+          {ratedSignals.map((signal) => (
+            <View key={signal.id} style={styles.field}>
+              <StyledText style={[styles.fieldLabel, { color: textColor }]}>
+                {signal.label}
+              </StyledText>
+              <StyledText style={[styles.fieldValue, { color: textColor }]}>
+                {currentEntry.signals[signal.id]}
+              </StyledText>
+            </View>
+          ))}
+
+          {currentEntry.tags.length > 0 && (
+            <View style={styles.field}>
+              <StyledText style={[styles.fieldLabel, { color: textColor }]}>
+                context
+              </StyledText>
+              <StyledText style={[styles.fieldValue, { color: textColor }]}>
+                {currentEntry.tags.map((id) => getTagLabel(id)).join(", ")}
+              </StyledText>
+            </View>
+          )}
+
+          {currentEntry.note.length > 0 && (
+            <View style={styles.field}>
+              <StyledText style={[styles.fieldLabel, { color: textColor }]}>
+                notes
+              </StyledText>
+              <StyledText style={[styles.fieldValue, { color: textColor }]}>
+                {currentEntry.note}
+              </StyledText>
+            </View>
+          )}
+
+          <View style={styles.bottomPad} />
+        </View>
+      </ScrollViewWithIndicator>
     );
   };
 
@@ -352,9 +282,6 @@ export default function EntryDetailScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   flex: { flex: 1 },
-  scrollWrapper: { flex: 1, flexDirection: "row", position: "relative" },
-  scrollTrack: scrollIndicatorBaseStyles.track,
-  scrollThumb: scrollIndicatorBaseStyles.thumb,
   content: {
     paddingTop: n(12),
   },
