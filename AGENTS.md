@@ -51,28 +51,6 @@ const styles = StyleSheet.create({
 });
 ```
 
-## ContentContainer
-Wrap screen content in `ContentContainer` - handles scrolling, theming, padding, and scroll indicators automatically. No styling needed on children.
-```tsx
-import ContentContainer from "@/components/ContentContainer";
-
-export default function MyScreen() {
-  return (
-    <ContentContainer headerTitle="My Screen">
-      <MyComponent />
-      <AnotherComponent />
-    </ContentContainer>
-  );
-}
-```
-
-Props:
-- `headerTitle` - Shows header with title (omit to hide)
-- `hideBackButton` - Hide back arrow (default: false)
-- `rightAction` - Header icon button: `{ icon: "share", onPress: () => {} }`
-- `contentWidth` - `"normal"` (default) or `"wide"` for more horizontal space
-- `contentGap` - Gap between children (default: 47)
-
 ## Tabs
 To add a new tab:
 
@@ -100,24 +78,6 @@ Settings use nested routes:
 app/(tabs)/settings.tsx         → Main settings page
 app/settings/customise.tsx      → Customise options
 app/settings/option-example.tsx → Options page (example)
-```
-
-Use `SelectorButton` + `OptionsSelector` for option pickers:
-```tsx
-// In settings page
-<SelectorButton
-    label="Option Example"
-    value={currentValue}
-    href="/settings/option-example"
-/>
-
-// In options page (app/settings/option-example.tsx)
-<OptionsSelector
-    title="Option Example"
-    options={[{ label: "Standard", value: "standard" }, ...]}
-    selectedValue={optionValue}
-    onSelect={(value) => setOptionValue(value)}
-/>
 ```
 
 ## Confirmation Screen
