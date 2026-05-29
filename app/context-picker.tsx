@@ -11,10 +11,7 @@ import {
   scrollIndicatorBaseStyles,
   useScrollIndicator,
 } from "@/hooks/useScrollIndicator";
-import {
-  commitResult,
-  getInitialTags,
-} from "@/utils/contextPickerStore";
+import { commitResult, getInitialTags } from "@/utils/contextPickerStore";
 import { n } from "@/utils/scaling";
 import { ALL_TAGS, type TagId } from "@/utils/tags";
 

@@ -1,17 +1,16 @@
 import { useFocusEffect } from "@react-navigation/native";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
   Animated,
   KeyboardAvoidingView,
   Platform,
-  TextInput as RNTextInput,
   StyleSheet,
   View,
 } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { HapticPressable } from "@/components/HapticPressable";
+import { EntryForm, type SignalRating } from "@/components/EntryForm";
 import { Header } from "@/components/Header";
 import { StyledText } from "@/components/StyledText";
 import { useInvertColors } from "@/contexts/InvertColorsContext";
@@ -20,16 +19,10 @@ import {
   scrollIndicatorBaseStyles,
   useScrollIndicator,
 } from "@/hooks/useScrollIndicator";
-import {
-  consumeResult,
-  openPicker,
-} from "@/utils/contextPickerStore";
+import { consumeResult } from "@/utils/contextPickerStore";
 import { formatDateShort } from "@/utils/formatDate";
 import { n } from "@/utils/scaling";
 import { getTagLabel, type TagId } from "@/utils/tags";
-
-const SIGNAL_RATINGS = ["on track", "roughly", "off track"] as const;
-type SignalRating = (typeof SIGNAL_RATINGS)[number];
 
 function addDays(dateStr: string, days: number): string {
   const [y, m, d] = dateStr.split("-").map(Number);
@@ -114,15 +107,6 @@ export default function EntryDetailScreen() {
     }, [])
   );
 
-  const contextDisplay = useMemo(() => {
-    if (editSelectedTags.size === 0) {
-      return null;
-    }
-    return Array.from(editSelectedTags)
-      .map((id) => getTagLabel(id))
-      .join(", ");
-  }, [editSelectedTags]);
-
   const handleStartEdit = () => {
     if (currentEntry) {
       setEditBreakfast(currentEntry.breakfast);
@@ -171,186 +155,32 @@ export default function EntryDetailScreen() {
             <Animated.ScrollView
               keyboardDismissMode="on-drag"
               keyboardShouldPersistTaps="handled"
-              onLayout={(e) =>
-                setScrollViewHeight(e.nativeEvent.layout.height)
-              }
+              onLayout={(e) => setScrollViewHeight(e.nativeEvent.layout.height)}
               onScroll={handleScroll}
               overScrollMode="never"
               scrollEventThrottle={16}
               showsVerticalScrollIndicator={false}
             >
               <View
-                onLayout={(e) =>
-                  setContentHeight(e.nativeEvent.layout.height)
-                }
-                style={styles.content}
+                onLayout={(e) => setContentHeight(e.nativeEvent.layout.height)}
               >
-                <View style={styles.field}>
-                  <StyledText style={[styles.fieldLabel, { color: textColor }]}>
-                    breakfast:
-                  </StyledText>
-                  <RNTextInput
-                    allowFontScaling={false}
-                    blurOnSubmit
-                    cursorColor={textColor}
-                    multiline
-                    onChangeText={setEditBreakfast}
-                    placeholder="Add breakfast"
-                    placeholderTextColor={textColor}
-                    returnKeyType="done"
-                    selectionColor={textColor}
-                    style={[
-                      styles.fieldInput,
-                      { color: textColor, borderBottomColor: textColor },
-                    ]}
-                    underlineColorAndroid="transparent"
-                    value={editBreakfast}
-                  />
-                </View>
-
-                <View style={styles.field}>
-                  <StyledText style={[styles.fieldLabel, { color: textColor }]}>
-                    lunch:
-                  </StyledText>
-                  <RNTextInput
-                    allowFontScaling={false}
-                    blurOnSubmit
-                    cursorColor={textColor}
-                    multiline
-                    onChangeText={setEditLunch}
-                    placeholder="Add lunch"
-                    placeholderTextColor={textColor}
-                    returnKeyType="done"
-                    selectionColor={textColor}
-                    style={[
-                      styles.fieldInput,
-                      { color: textColor, borderBottomColor: textColor },
-                    ]}
-                    underlineColorAndroid="transparent"
-                    value={editLunch}
-                  />
-                </View>
-
-                <View style={styles.field}>
-                  <StyledText style={[styles.fieldLabel, { color: textColor }]}>
-                    dinner:
-                  </StyledText>
-                  <RNTextInput
-                    allowFontScaling={false}
-                    blurOnSubmit
-                    cursorColor={textColor}
-                    multiline
-                    onChangeText={setEditDinner}
-                    placeholder="Add dinner"
-                    placeholderTextColor={textColor}
-                    returnKeyType="done"
-                    selectionColor={textColor}
-                    style={[
-                      styles.fieldInput,
-                      { color: textColor, borderBottomColor: textColor },
-                    ]}
-                    underlineColorAndroid="transparent"
-                    value={editDinner}
-                  />
-                </View>
-
-                <View style={styles.field}>
-                  <StyledText style={[styles.fieldLabel, { color: textColor }]}>
-                    snacks:
-                  </StyledText>
-                  <RNTextInput
-                    allowFontScaling={false}
-                    blurOnSubmit
-                    cursorColor={textColor}
-                    multiline
-                    onChangeText={setEditSnacks}
-                    placeholder="Add snacks"
-                    placeholderTextColor={textColor}
-                    returnKeyType="done"
-                    selectionColor={textColor}
-                    style={[
-                      styles.fieldInput,
-                      { color: textColor, borderBottomColor: textColor },
-                    ]}
-                    underlineColorAndroid="transparent"
-                    value={editSnacks}
-                  />
-                </View>
-
-                {enabledSignals.map((signalId) => {
-                  const label =
-                    SIGNAL_OPTIONS.find((s) => s.id === signalId)?.label ??
-                    signalId;
-                  const current = editSignalRatings[signalId] ?? null;
-                  return (
-                    <View key={signalId} style={styles.field}>
-                      <StyledText
-                        style={[styles.fieldLabel, { color: textColor }]}
-                      >
-                        {label}:
-                      </StyledText>
-                      <View style={styles.ratingRow}>
-                        {SIGNAL_RATINGS.map((rating) => (
-                          <HapticPressable
-                            key={rating}
-                            onPress={() => toggleSignal(signalId, rating)}
-                          >
-                            <StyledText
-                              style={[
-                                styles.ratingOption,
-                                { color: textColor },
-                                current === rating && styles.ratingSelected,
-                              ]}
-                            >
-                              {rating}
-                            </StyledText>
-                          </HapticPressable>
-                        ))}
-                      </View>
-                    </View>
-                  );
-                })}
-
-                <HapticPressable
-                  onPress={() => {
-                    openPicker(Array.from(editSelectedTags));
-                    router.push("/context-picker");
-                  }}
-                  style={styles.field}
-                >
-                  <StyledText
-                    style={[styles.fieldLabel, { color: textColor }]}
-                  >
-                    context:
-                  </StyledText>
-                  <StyledText
-                    style={[styles.fieldInput, { color: textColor }]}
-                  >
-                    {contextDisplay ?? "Add context tags"}
-                  </StyledText>
-                </HapticPressable>
-
-                <View style={styles.field}>
-                  <RNTextInput
-                    allowFontScaling={false}
-                    blurOnSubmit
-                    cursorColor={textColor}
-                    multiline
-                    onChangeText={setEditNote}
-                    placeholder="Add notes"
-                    placeholderTextColor={textColor}
-                    returnKeyType="done"
-                    selectionColor={textColor}
-                    style={[
-                      styles.fieldInput,
-                      { color: textColor, borderBottomColor: textColor },
-                    ]}
-                    underlineColorAndroid="transparent"
-                    value={editNote}
-                  />
-                </View>
-
-                <View style={styles.bottomPad} />
+                <EntryForm
+                  breakfast={editBreakfast}
+                  dinner={editDinner}
+                  enabledSignals={enabledSignals}
+                  lunch={editLunch}
+                  note={editNote}
+                  onBreakfastChange={setEditBreakfast}
+                  onDinnerChange={setEditDinner}
+                  onLunchChange={setEditLunch}
+                  onNoteChange={setEditNote}
+                  onSnacksChange={setEditSnacks}
+                  onToggleSignal={toggleSignal}
+                  selectedTags={editSelectedTags}
+                  signalRatings={editSignalRatings}
+                  snacks={editSnacks}
+                  textColor={textColor}
+                />
               </View>
             </Animated.ScrollView>
 
@@ -539,27 +369,6 @@ const styles = StyleSheet.create({
   fieldValue: {
     fontFamily: "PublicSans-Regular",
     fontSize: n(22),
-  },
-  fieldInput: {
-    fontSize: n(23),
-    fontFamily: "PublicSans-Regular",
-    paddingVertical: n(2),
-    paddingBottom: n(4),
-    paddingLeft: 0,
-    borderBottomWidth: n(3),
-    marginRight: n(18),
-  },
-  ratingRow: {
-    flexDirection: "row",
-    gap: n(24),
-    paddingTop: n(4),
-  },
-  ratingOption: {
-    fontSize: n(22),
-    fontFamily: "PublicSans-Regular",
-  },
-  ratingSelected: {
-    textDecorationLine: "underline",
   },
   emptyState: {
     paddingHorizontal: n(28),
