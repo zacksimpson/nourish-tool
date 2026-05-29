@@ -1,17 +1,14 @@
 import Constants from "expo-constants";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Animated, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HapticPressable } from "@/components/HapticPressable";
 import { Header } from "@/components/Header";
+import { ScrollViewWithIndicator } from "@/components/ScrollViewWithIndicator";
 import { StyledText } from "@/components/StyledText";
 import { SwipeBackContainer } from "@/components/SwipeBackContainer";
 import { useInvertColors } from "@/contexts/InvertColorsContext";
-import {
-  scrollIndicatorBaseStyles,
-  useScrollIndicator,
-} from "@/hooks/useScrollIndicator";
 import { n } from "@/utils/scaling";
 
 const USDA_BASE = "https://api.nal.usda.gov/fdc/v1";
@@ -36,14 +33,6 @@ export default function SearchResultsScreen() {
   const textColor = invertColors ? "black" : "white";
 
   const { query } = useLocalSearchParams<{ query: string }>();
-
-  const {
-    handleScroll,
-    scrollIndicatorHeight,
-    scrollIndicatorPosition,
-    setContentHeight,
-    setScrollViewHeight,
-  } = useScrollIndicator();
 
   const [status, setStatus] = useState<Status>("loading");
   const [results, setResults] = useState<FoodResult[]>([]);
@@ -143,54 +132,29 @@ export default function SearchResultsScreen() {
     }
 
     return (
-      <View style={styles.scrollWrapper}>
-        <Animated.ScrollView
-          onLayout={(e) => setScrollViewHeight(e.nativeEvent.layout.height)}
-          onScroll={handleScroll}
-          overScrollMode="never"
-          scrollEventThrottle={16}
-          showsVerticalScrollIndicator={false}
-        >
-          <View onLayout={(e) => setContentHeight(e.nativeEvent.layout.height)}>
-            {results.map((food) => (
-              <HapticPressable
-                key={food.fdcId}
-                onPress={() => handleSelectFood(food)}
-                style={styles.row}
-              >
-                <StyledText
-                  numberOfLines={1}
-                  style={[styles.foodName, { color: textColor }]}
-                >
-                  {toTitleCase(food.description)}
-                </StyledText>
-                <StyledText
-                  numberOfLines={1}
-                  style={[styles.foodCategory, { color: textColor }]}
-                >
-                  {food.brandOwner ?? food.foodCategory ?? food.dataType}
-                </StyledText>
-              </HapticPressable>
-            ))}
-            <View style={styles.bottomPad} />
-          </View>
-        </Animated.ScrollView>
-
-        {scrollIndicatorHeight > 0 && (
-          <View style={[styles.scrollTrack, { backgroundColor: textColor }]}>
-            <Animated.View
-              style={[
-                styles.scrollThumb,
-                {
-                  backgroundColor: textColor,
-                  height: scrollIndicatorHeight,
-                  transform: [{ translateY: scrollIndicatorPosition }],
-                },
-              ]}
-            />
-          </View>
-        )}
-      </View>
+      <ScrollViewWithIndicator textColor={textColor}>
+        {results.map((food) => (
+          <HapticPressable
+            key={food.fdcId}
+            onPress={() => handleSelectFood(food)}
+            style={styles.row}
+          >
+            <StyledText
+              numberOfLines={1}
+              style={[styles.foodName, { color: textColor }]}
+            >
+              {toTitleCase(food.description)}
+            </StyledText>
+            <StyledText
+              numberOfLines={1}
+              style={[styles.foodCategory, { color: textColor }]}
+            >
+              {food.brandOwner ?? food.foodCategory ?? food.dataType}
+            </StyledText>
+          </HapticPressable>
+        ))}
+        <View style={styles.bottomPad} />
+      </ScrollViewWithIndicator>
     );
   };
 
@@ -209,9 +173,6 @@ export default function SearchResultsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scrollWrapper: { flex: 1, flexDirection: "row", position: "relative" },
-  scrollTrack: scrollIndicatorBaseStyles.track,
-  scrollThumb: scrollIndicatorBaseStyles.thumb,
   stateContainer: {
     paddingHorizontal: n(22),
     paddingTop: n(32),
