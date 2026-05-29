@@ -4,7 +4,6 @@ import { TextInput as RNTextInput, StyleSheet, View } from "react-native";
 import { HapticPressable } from "@/components/HapticPressable";
 import { StyledText } from "@/components/StyledText";
 import { SIGNAL_OPTIONS } from "@/contexts/NourishContext";
-import { openPicker } from "@/utils/contextPickerStore";
 import { n } from "@/utils/scaling";
 import { getTagLabel, type TagId } from "@/utils/tags";
 
@@ -182,8 +181,10 @@ export function EntryForm({
 
       <HapticPressable
         onPress={() => {
-          openPicker(Array.from(selectedTags));
-          router.push("/context-picker");
+          router.push({
+            pathname: "/context-picker",
+            params: { initialTags: Array.from(selectedTags).join(",") },
+          });
         }}
         style={styles.field}
       >
