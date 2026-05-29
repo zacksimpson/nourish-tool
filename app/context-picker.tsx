@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -8,7 +8,7 @@ import { ScrollViewWithIndicator } from "@/components/ScrollViewWithIndicator";
 import { StyledText } from "@/components/StyledText";
 import { SwipeBackContainer } from "@/components/SwipeBackContainer";
 import { useInvertColors } from "@/contexts/InvertColorsContext";
-import { commitResult, getInitialTags } from "@/utils/contextPickerStore";
+import { commitResult } from "@/utils/contextPickerStore";
 import { n } from "@/utils/scaling";
 import { ALL_TAGS, type TagId } from "@/utils/tags";
 
@@ -17,9 +17,11 @@ export default function ContextPickerScreen() {
   const bg = invertColors ? "white" : "black";
   const textColor = invertColors ? "black" : "white";
 
-  const [selectedTags, setSelectedTags] = useState<Set<TagId>>(
-    () => new Set(getInitialTags() as TagId[])
-  );
+  const { initialTags } = useLocalSearchParams<{ initialTags?: string }>();
+  const [selectedTags, setSelectedTags] = useState<Set<TagId>>(() => {
+    const tags = initialTags ? initialTags.split(",").filter(Boolean) : [];
+    return new Set(tags as TagId[]);
+  });
 
   const toggleTag = (id: TagId) => {
     const next = new Set(selectedTags);
