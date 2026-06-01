@@ -106,6 +106,19 @@ export default function EntryDetailScreen() {
   };
 
   const handleSave = () => {
+    const hasContent =
+      editBreakfast.trim() ||
+      editLunch.trim() ||
+      editDinner.trim() ||
+      editSnacks.trim() ||
+      editNote.trim() ||
+      editSelectedTags.size > 0 ||
+      Object.values(editSignalRatings).some((r) => r !== null);
+
+    if (!hasContent) {
+      return;
+    }
+
     saveEntry({
       date: currentDate,
       breakfast: editBreakfast,

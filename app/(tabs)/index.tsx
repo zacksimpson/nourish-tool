@@ -72,6 +72,19 @@ export default function LogScreen() {
   };
 
   const handleSave = () => {
+    const hasContent =
+      breakfast.trim() ||
+      lunch.trim() ||
+      dinner.trim() ||
+      snacks.trim() ||
+      note.trim() ||
+      selectedTags.size > 0 ||
+      Object.values(signalRatings).some((r) => r !== null);
+
+    if (!hasContent) {
+      return;
+    }
+
     saveEntry({
       date: today,
       breakfast,
