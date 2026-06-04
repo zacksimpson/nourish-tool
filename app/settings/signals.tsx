@@ -1,4 +1,3 @@
-import { router } from "expo-router";
 import { TextInput as RNTextInput, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HapticPressable } from "@/components/HapticPressable";
@@ -11,6 +10,7 @@ import {
   type SignalId,
   useNourish,
 } from "@/contexts/NourishContext";
+import { goBack } from "@/utils/navigation";
 import { n } from "@/utils/scaling";
 
 const SIGNAL_UNITS: Record<SignalId, string> = {
@@ -32,12 +32,6 @@ export default function SignalsScreen() {
 
   const { signals, targets, saveSignals, saveTargets } = useNourish();
 
-  const handleBack = () => {
-    if (router.canGoBack()) {
-      router.back();
-    }
-  };
-
   const toggleSignal = (id: SignalId) => {
     if (signals.includes(id)) {
       saveSignals(signals.filter((s) => s !== id));
@@ -58,7 +52,7 @@ export default function SignalsScreen() {
   };
 
   return (
-    <SwipeBackContainer enabled onSwipeBack={handleBack}>
+    <SwipeBackContainer enabled onSwipeBack={goBack}>
       <SafeAreaView
         edges={["top"]}
         style={[styles.container, { backgroundColor: bg }]}

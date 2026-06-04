@@ -1,5 +1,5 @@
 import Constants from "expo-constants";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { TextInput as RNTextInput, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,6 +7,7 @@ import { Header } from "@/components/Header";
 import { StyledText } from "@/components/StyledText";
 import { SwipeBackContainer } from "@/components/SwipeBackContainer";
 import { useInvertColors } from "@/contexts/InvertColorsContext";
+import { goBack } from "@/utils/navigation";
 import { n } from "@/utils/scaling";
 
 const USDA_BASE = "https://api.nal.usda.gov/fdc/v1";
@@ -82,12 +83,6 @@ export default function FoodDetailScreen() {
 
   const parsed = Number.parseFloat(servingsText);
   const servings = Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
-
-  const handleBack = () => {
-    if (router.canGoBack()) {
-      router.back();
-    }
-  };
 
   useEffect(() => {
     setServingsText("1");
@@ -189,7 +184,7 @@ export default function FoodDetailScreen() {
   };
 
   return (
-    <SwipeBackContainer enabled onSwipeBack={handleBack}>
+    <SwipeBackContainer enabled onSwipeBack={goBack}>
       <SafeAreaView
         edges={["top"]}
         style={[styles.container, { backgroundColor: bg }]}

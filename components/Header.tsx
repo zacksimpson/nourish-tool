@@ -1,7 +1,7 @@
 import { MaterialIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { useInvertColors } from "@/contexts/InvertColorsContext";
+import { goBack } from "@/utils/navigation";
 import { n } from "@/utils/scaling";
 import { HapticPressable } from "./HapticPressable";
 import { StyledText } from "./StyledText";
@@ -28,16 +28,10 @@ export function Header({
   const { invertColors } = useInvertColors();
   const iconColor = invertColors ? "black" : "white";
 
-  const handleBack = () => {
-    if (router.canGoBack()) {
-      router.back();
-    }
-  };
-
   const renderLeft = () => {
     if (!hideBackButton) {
       return (
-        <HapticPressable onPress={handleBack}>
+        <HapticPressable onPress={goBack}>
           <View style={styles.button}>
             <MaterialIcons
               color={iconColor}
