@@ -9,7 +9,7 @@ import { Toast } from "@/components/Toast";
 import { useInvertColors } from "@/contexts/InvertColorsContext";
 import { useNourish } from "@/contexts/NourishContext";
 import { consumeResult } from "@/utils/contextPickerStore";
-import { formatDateShort } from "@/utils/formatDate";
+import { formatDateShort, todayDateString } from "@/utils/formatDate";
 import type { TagId } from "@/utils/tags";
 
 export default function LogScreen() {
@@ -19,7 +19,7 @@ export default function LogScreen() {
 
   const { entries, signals: enabledSignals, saveEntry, loaded } = useNourish();
 
-  const todayRef = useRef(new Date().toISOString().slice(0, 10));
+  const todayRef = useRef(todayDateString());
   const today = todayRef.current;
 
   const [breakfast, setBreakfast] = useState("");
