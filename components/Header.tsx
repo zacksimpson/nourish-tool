@@ -1,6 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { StyleSheet, View } from "react-native";
-import { useInvertColors } from "@/contexts/InvertColorsContext";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import { goBack } from "@/utils/navigation";
 import { n } from "@/utils/scaling";
 import { HapticPressable } from "./HapticPressable";
@@ -25,8 +25,7 @@ export function Header({
   leftAction,
   rightAction,
 }: HeaderProps) {
-  const { invertColors } = useInvertColors();
-  const iconColor = invertColors ? "black" : "white";
+  const { bg, textColor } = useThemeColors();
 
   const renderLeft = () => {
     if (!hideBackButton) {
@@ -34,7 +33,7 @@ export function Header({
         <HapticPressable onPress={goBack}>
           <View style={styles.button}>
             <MaterialIcons
-              color={iconColor}
+              color={textColor}
               name="arrow-back-ios"
               size={n(28)}
             />
@@ -47,7 +46,7 @@ export function Header({
         <HapticPressable onPress={leftAction.onPress}>
           <View style={styles.button}>
             <MaterialIcons
-              color={iconColor}
+              color={textColor}
               name={leftAction.icon}
               size={n(28)}
             />
@@ -62,7 +61,7 @@ export function Header({
     <View
       style={[
         styles.header,
-        { backgroundColor: invertColors ? "white" : "black" },
+        { backgroundColor: bg },
       ]}
     >
       {renderLeft()}
@@ -73,7 +72,7 @@ export function Header({
         <HapticPressable onPress={rightAction.onPress}>
           <View style={styles.button}>
             <MaterialIcons
-              color={iconColor}
+              color={textColor}
               name={rightAction.icon}
               size={n(28)}
             />

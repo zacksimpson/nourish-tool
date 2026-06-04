@@ -7,16 +7,14 @@ import { Header } from "@/components/Header";
 import { ScrollViewWithIndicator } from "@/components/ScrollViewWithIndicator";
 import { StyledText } from "@/components/StyledText";
 import { SwipeBackContainer } from "@/components/SwipeBackContainer";
-import { useInvertColors } from "@/contexts/InvertColorsContext";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import { commitResult } from "@/utils/contextPickerStore";
 import { goBack } from "@/utils/navigation";
 import { n } from "@/utils/scaling";
 import { ALL_TAGS, type TagId } from "@/utils/tags";
 
 export default function ContextPickerScreen() {
-  const { invertColors } = useInvertColors();
-  const bg = invertColors ? "white" : "black";
-  const textColor = invertColors ? "black" : "white";
+  const { bg, textColor } = useThemeColors();
 
   const { initialTags } = useLocalSearchParams<{ initialTags?: string }>();
   const [selectedTags, setSelectedTags] = useState<Set<TagId>>(() => {

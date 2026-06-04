@@ -5,13 +5,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Header } from "@/components/Header";
 import { SwipeBackContainer } from "@/components/SwipeBackContainer";
 import { TextInput } from "@/components/TextInput";
-import { useInvertColors } from "@/contexts/InvertColorsContext";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import { goBack } from "@/utils/navigation";
 import { n } from "@/utils/scaling";
 
 export default function SearchScreen() {
-  const { invertColors } = useInvertColors();
-  const bg = invertColors ? "white" : "black";
+  const { bg } = useThemeColors();
 
   const [query, setQuery] = useState("");
 

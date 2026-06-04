@@ -4,12 +4,12 @@ import { HapticPressable } from "@/components/HapticPressable";
 import { Header } from "@/components/Header";
 import { StyledText } from "@/components/StyledText";
 import { SwipeBackContainer } from "@/components/SwipeBackContainer";
-import { useInvertColors } from "@/contexts/InvertColorsContext";
 import {
   SIGNAL_OPTIONS,
   type SignalId,
   useNourish,
 } from "@/contexts/NourishContext";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import { goBack } from "@/utils/navigation";
 import { n } from "@/utils/scaling";
 
@@ -26,9 +26,7 @@ const LINE_WIDTH = n(14.5);
 const LINE_HEIGHT = n(2.22);
 
 export default function SignalsScreen() {
-  const { invertColors } = useInvertColors();
-  const bg = invertColors ? "white" : "black";
-  const textColor = invertColors ? "black" : "white";
+  const { bg, textColor } = useThemeColors();
 
   const { signals, targets, saveSignals, saveTargets } = useNourish();
 

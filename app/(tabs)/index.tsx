@@ -6,16 +6,14 @@ import { EntryForm, type SignalRating } from "@/components/EntryForm";
 import { Header } from "@/components/Header";
 import { ScrollViewWithIndicator } from "@/components/ScrollViewWithIndicator";
 import { Toast } from "@/components/Toast";
-import { useInvertColors } from "@/contexts/InvertColorsContext";
 import { useNourish } from "@/contexts/NourishContext";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import { consumeResult } from "@/utils/contextPickerStore";
 import { formatDateShort, todayDateString } from "@/utils/formatDate";
 import type { TagId } from "@/utils/tags";
 
 export default function LogScreen() {
-  const { invertColors } = useInvertColors();
-  const bg = invertColors ? "white" : "black";
-  const textColor = invertColors ? "black" : "white";
+  const { bg, textColor } = useThemeColors();
 
   const { entries, signals: enabledSignals, saveEntry, loaded } = useNourish();
 
