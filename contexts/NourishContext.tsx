@@ -25,6 +25,11 @@ export const SIGNAL_OPTIONS = [
   { id: "protein", label: "protein" },
   { id: "carbs", label: "carbs" },
   { id: "fat", label: "fat" },
+  { id: "water", label: "water" },
+  { id: "fiber", label: "fiber" },
+  { id: "sodium", label: "sodium" },
+  { id: "added-sugar", label: "added sugar" },
+  { id: "caffeine", label: "caffeine" },
 ] as const;
 
 export type SignalId = (typeof SIGNAL_OPTIONS)[number]["id"];
