@@ -9,6 +9,7 @@ import { ScrollViewWithIndicator } from "@/components/ScrollViewWithIndicator";
 import { StyledText } from "@/components/StyledText";
 import { SwipeBackContainer } from "@/components/SwipeBackContainer";
 import { useInvertColors } from "@/contexts/InvertColorsContext";
+import { goBack } from "@/utils/navigation";
 import { n } from "@/utils/scaling";
 
 const USDA_BASE = "https://api.nal.usda.gov/fdc/v1";
@@ -36,12 +37,6 @@ export default function SearchResultsScreen() {
 
   const [status, setStatus] = useState<Status>("loading");
   const [results, setResults] = useState<FoodResult[]>([]);
-
-  const handleBack = () => {
-    if (router.canGoBack()) {
-      router.back();
-    }
-  };
 
   useEffect(() => {
     if (!query) {
@@ -159,7 +154,7 @@ export default function SearchResultsScreen() {
   };
 
   return (
-    <SwipeBackContainer enabled onSwipeBack={handleBack}>
+    <SwipeBackContainer enabled onSwipeBack={goBack}>
       <SafeAreaView
         edges={["top"]}
         style={[styles.container, { backgroundColor: bg }]}

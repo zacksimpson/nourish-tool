@@ -1,5 +1,5 @@
-import { router, useLocalSearchParams } from "expo-router";
-import { useCallback, useState } from "react";
+import { useLocalSearchParams } from "expo-router";
+import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HapticPressable } from "@/components/HapticPressable";
@@ -9,6 +9,7 @@ import { StyledText } from "@/components/StyledText";
 import { SwipeBackContainer } from "@/components/SwipeBackContainer";
 import { useInvertColors } from "@/contexts/InvertColorsContext";
 import { commitResult } from "@/utils/contextPickerStore";
+import { goBack } from "@/utils/navigation";
 import { n } from "@/utils/scaling";
 import { ALL_TAGS, type TagId } from "@/utils/tags";
 
@@ -34,14 +35,8 @@ export default function ContextPickerScreen() {
     commitResult(Array.from(next));
   };
 
-  const handleBack = useCallback(() => {
-    if (router.canGoBack()) {
-      router.back();
-    }
-  }, []);
-
   return (
-    <SwipeBackContainer enabled onSwipeBack={handleBack}>
+    <SwipeBackContainer enabled onSwipeBack={goBack}>
       <SafeAreaView
         edges={["top"]}
         style={[styles.container, { backgroundColor: bg }]}

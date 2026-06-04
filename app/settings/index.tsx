@@ -7,20 +7,15 @@ import { StyledText } from "@/components/StyledText";
 import { SwipeBackContainer } from "@/components/SwipeBackContainer";
 import { ToggleSwitch } from "@/components/ToggleSwitch";
 import { useInvertColors } from "@/contexts/InvertColorsContext";
+import { goBack } from "@/utils/navigation";
 import { n } from "@/utils/scaling";
 
 export default function SettingsScreen() {
   const { invertColors, setInvertColors } = useInvertColors();
   const bg = invertColors ? "white" : "black";
 
-  const handleBack = () => {
-    if (router.canGoBack()) {
-      router.back();
-    }
-  };
-
   return (
-    <SwipeBackContainer enabled onSwipeBack={handleBack}>
+    <SwipeBackContainer enabled onSwipeBack={goBack}>
       <SafeAreaView
         edges={["top"]}
         style={[styles.container, { backgroundColor: bg }]}

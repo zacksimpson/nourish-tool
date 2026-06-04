@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { SwipeBackContainer } from "@/components/SwipeBackContainer";
 import { TextInput } from "@/components/TextInput";
 import { useInvertColors } from "@/contexts/InvertColorsContext";
+import { goBack } from "@/utils/navigation";
 import { n } from "@/utils/scaling";
 
 export default function SearchScreen() {
@@ -13,12 +14,6 @@ export default function SearchScreen() {
   const bg = invertColors ? "white" : "black";
 
   const [query, setQuery] = useState("");
-
-  const handleBack = () => {
-    if (router.canGoBack()) {
-      router.back();
-    }
-  };
 
   const handleSearch = () => {
     const trimmed = query.trim();
@@ -28,7 +23,7 @@ export default function SearchScreen() {
   };
 
   return (
-    <SwipeBackContainer enabled onSwipeBack={handleBack}>
+    <SwipeBackContainer enabled onSwipeBack={goBack}>
       <SafeAreaView
         edges={["top"]}
         style={[styles.container, { backgroundColor: bg }]}
