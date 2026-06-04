@@ -26,6 +26,21 @@ interface FoodResult {
 
 type Status = "loading" | "success" | "error" | "empty";
 
+function processResults(foods: FoodResult[]): FoodResult[] {
+  const seen = new Set<string>();
+  const deduped = foods.filter((food) => {
+    const key = food.description.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  return deduped.sort((a, b) => {
+    if (a.dataType === "SR Legacy" && b.dataType !== "SR Legacy") return -1;
+    if (a.dataType !== "SR Legacy" && b.dataType === "SR Legacy") return 1;
+    return 0;
+  });
+}
+
 export default function SearchResultsScreen() {
   const { bg, textColor } = useThemeColors();
 
@@ -52,28 +67,11 @@ export default function SearchResultsScreen() {
         return res.json() as Promise<{ foods: FoodResult[] }>;
       })
       .then((data) => {
-        if (data.foods.length === 0) {
+        const processed = processResults(data.foods);
+        if (processed.length === 0) {
           setStatus("empty");
         } else {
-          const seen = new Set<string>();
-          const deduped = data.foods.filter((food) => {
-            const key = food.description.toLowerCase();
-            if (seen.has(key)) {
-              return false;
-            }
-            seen.add(key);
-            return true;
-          });
-          const sorted = [...deduped].sort((a, b) => {
-            if (a.dataType === "SR Legacy" && b.dataType !== "SR Legacy") {
-              return -1;
-            }
-            if (a.dataType !== "SR Legacy" && b.dataType === "SR Legacy") {
-              return 1;
-            }
-            return 0;
-          });
-          setResults(sorted);
+          setResults(processed);
           setStatus("success");
         }
       })
