@@ -6,6 +6,7 @@ import { HapticPressable } from "@/components/HapticPressable";
 import { Header } from "@/components/Header";
 import { StyledText } from "@/components/StyledText";
 import { useInvertColors } from "@/contexts/InvertColorsContext";
+import { todayDateString } from "@/utils/formatDate";
 import { n } from "@/utils/scaling";
 
 const DAY_HEADERS = ["S", "M", "T", "W", "T", "F", "S"];
@@ -54,10 +55,7 @@ export default function HistoryScreen() {
     router.push({ pathname: "/entry/[date]", params: { date } });
   };
 
-  const todayStr = useMemo(() => {
-    const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-  }, []);
+  const todayStr = todayDateString();
 
   const rows = useMemo(() => {
     const firstDay = new Date(viewYear, viewMonth, 1).getDay();

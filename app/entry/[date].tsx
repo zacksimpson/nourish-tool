@@ -11,7 +11,7 @@ import { StyledText } from "@/components/StyledText";
 import { useInvertColors } from "@/contexts/InvertColorsContext";
 import { SIGNAL_OPTIONS, useNourish } from "@/contexts/NourishContext";
 import { consumeResult } from "@/utils/contextPickerStore";
-import { formatDateShort } from "@/utils/formatDate";
+import { formatDateShort, todayDateString } from "@/utils/formatDate";
 import { n } from "@/utils/scaling";
 import { getTagLabel, type TagId } from "@/utils/tags";
 
@@ -30,7 +30,7 @@ export default function EntryDetailScreen() {
   const { date } = useLocalSearchParams<{ date: string }>();
   const { entries, signals: enabledSignals, saveEntry } = useNourish();
 
-  const todayRef = useRef(new Date().toISOString().slice(0, 10));
+  const todayRef = useRef(todayDateString());
   const [currentDate, setCurrentDate] = useState(date);
   const currentDateRef = useRef(currentDate);
   currentDateRef.current = currentDate;
