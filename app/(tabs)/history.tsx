@@ -31,22 +31,10 @@ export default function HistoryScreen() {
   const [viewYear, setViewYear] = useState(() => new Date().getFullYear());
   const [viewMonth, setViewMonth] = useState(() => new Date().getMonth());
 
-  const handlePrevMonth = () => {
-    if (viewMonth === 0) {
-      setViewYear((y) => y - 1);
-      setViewMonth(11);
-    } else {
-      setViewMonth((m) => m - 1);
-    }
-  };
-
-  const handleNextMonth = () => {
-    if (viewMonth === 11) {
-      setViewYear((y) => y + 1);
-      setViewMonth(0);
-    } else {
-      setViewMonth((m) => m + 1);
-    }
+  const shiftMonth = (delta: number) => {
+    const d = new Date(viewYear, viewMonth + delta, 1);
+    setViewYear(d.getFullYear());
+    setViewMonth(d.getMonth());
   };
 
   const handleSelectDate = (date: string) => {
@@ -85,8 +73,8 @@ export default function HistoryScreen() {
       <Header
         headerTitle={`${MONTH_NAMES[viewMonth]} ${viewYear}`}
         hideBackButton
-        leftAction={{ icon: "chevron-left", onPress: handlePrevMonth }}
-        rightAction={{ icon: "chevron-right", onPress: handleNextMonth }}
+        leftAction={{ icon: "chevron-left", onPress: () => shiftMonth(-1) }}
+        rightAction={{ icon: "chevron-right", onPress: () => shiftMonth(1) }}
       />
 
       <View style={styles.content}>
