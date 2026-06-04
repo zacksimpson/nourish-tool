@@ -23,6 +23,13 @@ export default function SettingsScreen() {
         <Header headerTitle="Settings" />
 
         <ScrollView overScrollMode="never" showsVerticalScrollIndicator={false}>
+          <HapticPressable
+            onPress={() => router.push("/settings/signals")}
+            style={styles.row}
+          >
+            <StyledText style={styles.rowText}>Signals</StyledText>
+          </HapticPressable>
+
           <View style={styles.row}>
             <ToggleSwitch
               label="Invert Colors"
@@ -30,13 +37,6 @@ export default function SettingsScreen() {
               value={invertColors}
             />
           </View>
-
-          <HapticPressable
-            onPress={() => router.push("/settings/signals")}
-            style={styles.row}
-          >
-            <StyledText style={styles.rowText}>Signals</StyledText>
-          </HapticPressable>
         </ScrollView>
       </SafeAreaView>
     </SwipeBackContainer>
