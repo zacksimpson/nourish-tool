@@ -1,4 +1,3 @@
-import Constants from "expo-constants";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { TextInput as RNTextInput, StyleSheet, View } from "react-native";
@@ -7,10 +6,9 @@ import { Header } from "@/components/Header";
 import { StyledText } from "@/components/StyledText";
 import { SwipeBackContainer } from "@/components/SwipeBackContainer";
 import { useThemeColors } from "@/hooks/useThemeColors";
+import { foodDetailUrl } from "@/utils/usdaApi";
 import { goBack } from "@/utils/navigation";
 import { n } from "@/utils/scaling";
-
-const USDA_BASE = "https://api.nal.usda.gov/fdc/v1";
 
 const NUTRIENTS = [
   { id: 1008, label: "Calories", unit: "kcal" },
@@ -90,9 +88,7 @@ export default function FoodDetailScreen() {
       return;
     }
 
-    const apiKey =
-      (Constants.expoConfig?.extra?.usdaApiKey as string | undefined) ?? "";
-    const url = `${USDA_BASE}/food/${id}?api_key=${apiKey}`;
+    const url = foodDetailUrl(id);
 
     fetch(url)
       .then((res) => {

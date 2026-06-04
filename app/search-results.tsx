@@ -1,4 +1,3 @@
-import Constants from "expo-constants";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
@@ -11,8 +10,7 @@ import { SwipeBackContainer } from "@/components/SwipeBackContainer";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import { goBack } from "@/utils/navigation";
 import { n } from "@/utils/scaling";
-
-const USDA_BASE = "https://api.nal.usda.gov/fdc/v1";
+import { searchUrl } from "@/utils/usdaApi";
 
 function toTitleCase(str: string): string {
   return str.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
@@ -42,9 +40,7 @@ export default function SearchResultsScreen() {
       return;
     }
 
-    const apiKey =
-      (Constants.expoConfig?.extra?.usdaApiKey as string | undefined) ?? "";
-    const url = `${USDA_BASE}/foods/search?query=${encodeURIComponent(query)}&dataType=SR+Legacy,Branded&pageSize=25&api_key=${apiKey}`;
+    const url = searchUrl(query);
 
     setStatus("loading");
 
