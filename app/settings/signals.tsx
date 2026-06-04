@@ -15,9 +15,14 @@ import { n } from "@/utils/scaling";
 
 const SIGNAL_UNITS: Record<SignalId, string> = {
   calories: "kcal",
+  protein: "g",
   carbs: "g",
   fat: "g",
-  protein: "g",
+  water: "oz",
+  fiber: "g",
+  sodium: "mg",
+  "added-sugar": "g",
+  caffeine: "mg",
 };
 
 const CIRCLE_DIAMETER = n(9.8);
