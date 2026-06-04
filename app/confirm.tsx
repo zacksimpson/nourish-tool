@@ -5,12 +5,12 @@ import { HapticPressable } from "@/components/HapticPressable";
 import { Header } from "@/components/Header";
 import { StyledText } from "@/components/StyledText";
 import { SwipeBackContainer } from "@/components/SwipeBackContainer";
-import { useInvertColors } from "@/contexts/InvertColorsContext";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import { goBack } from "@/utils/navigation";
 import { n } from "@/utils/scaling";
 
 export default function ConfirmScreen() {
-  const { invertColors } = useInvertColors();
+  const { bg, textColor } = useThemeColors();
   const params = useLocalSearchParams<{
     title: string;
     message: string;
@@ -18,9 +18,6 @@ export default function ConfirmScreen() {
     action: string;
     returnPath: string;
   }>();
-
-  const bg = invertColors ? "white" : "black";
-  const textColor = invertColors ? "black" : "white";
 
   const handleConfirm = () => {
     const path = (params.returnPath || "/(tabs)/") as Href;

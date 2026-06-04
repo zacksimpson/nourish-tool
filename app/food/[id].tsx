@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Header } from "@/components/Header";
 import { StyledText } from "@/components/StyledText";
 import { SwipeBackContainer } from "@/components/SwipeBackContainer";
-import { useInvertColors } from "@/contexts/InvertColorsContext";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import { goBack } from "@/utils/navigation";
 import { n } from "@/utils/scaling";
 
@@ -69,9 +69,7 @@ function resolveServing(data: FoodDetail): { scale: number; label: string } {
 }
 
 export default function FoodDetailScreen() {
-  const { invertColors } = useInvertColors();
-  const bg = invertColors ? "white" : "black";
-  const textColor = invertColors ? "black" : "white";
+  const { bg, textColor } = useThemeColors();
 
   const { id, name } = useLocalSearchParams<{ id: string; name: string }>();
 

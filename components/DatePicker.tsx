@@ -4,7 +4,8 @@ import { Text as DefaultText, Modal, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HapticPressable } from "@/components/HapticPressable";
 import { StyledText } from "@/components/StyledText";
-import { useInvertColors } from "@/contexts/InvertColorsContext";
+import { useThemeColors } from "@/hooks/useThemeColors";
+import { todayDateString } from "@/utils/formatDate";
 import { n } from "@/utils/scaling";
 
 const DAY_HEADERS = ["S", "M", "T", "W", "T", "F", "S"];
@@ -44,14 +45,9 @@ export function DatePicker({
   onPrevMonth,
   onNextMonth,
 }: DatePickerProps) {
-  const { invertColors } = useInvertColors();
-  const bg = invertColors ? "white" : "black";
-  const textColor = invertColors ? "black" : "white";
+  const { bg, textColor } = useThemeColors();
 
-  const todayStr = useMemo(() => {
-    const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-  }, []);
+  const todayStr = todayDateString();
 
   const { rows } = useMemo(() => {
     const firstDay = new Date(viewYear, viewMonth, 1).getDay();

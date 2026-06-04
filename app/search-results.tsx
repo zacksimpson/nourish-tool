@@ -8,7 +8,7 @@ import { Header } from "@/components/Header";
 import { ScrollViewWithIndicator } from "@/components/ScrollViewWithIndicator";
 import { StyledText } from "@/components/StyledText";
 import { SwipeBackContainer } from "@/components/SwipeBackContainer";
-import { useInvertColors } from "@/contexts/InvertColorsContext";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import { goBack } from "@/utils/navigation";
 import { n } from "@/utils/scaling";
 
@@ -29,9 +29,7 @@ interface FoodResult {
 type Status = "loading" | "success" | "error" | "empty";
 
 export default function SearchResultsScreen() {
-  const { invertColors } = useInvertColors();
-  const bg = invertColors ? "white" : "black";
-  const textColor = invertColors ? "black" : "white";
+  const { bg, textColor } = useThemeColors();
 
   const { query } = useLocalSearchParams<{ query: string }>();
 

@@ -5,7 +5,7 @@ import { StyleSheet, View } from "react-native";
 import { HapticPressable } from "@/components/HapticPressable";
 import { SettingsIcon } from "@/components/SettingsIcon";
 import { StyledText } from "@/components/StyledText";
-import { useInvertColors } from "@/contexts/InvertColorsContext";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import { n } from "@/utils/scaling";
 
 interface NavbarProps {
@@ -14,9 +14,7 @@ interface NavbarProps {
 }
 
 export function Navbar({ currentScreenName, navigation }: NavbarProps) {
-  const { invertColors } = useInvertColors();
-  const bg = invertColors ? "white" : "black";
-  const textColor = invertColors ? "black" : "white";
+  const { bg, textColor } = useThemeColors();
 
   const isOnHistory = currentScreenName === "history";
 

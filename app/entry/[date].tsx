@@ -8,8 +8,8 @@ import { EntryForm, type SignalRating } from "@/components/EntryForm";
 import { Header } from "@/components/Header";
 import { ScrollViewWithIndicator } from "@/components/ScrollViewWithIndicator";
 import { StyledText } from "@/components/StyledText";
-import { useInvertColors } from "@/contexts/InvertColorsContext";
 import { SIGNAL_OPTIONS, useNourish } from "@/contexts/NourishContext";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import { consumeResult } from "@/utils/contextPickerStore";
 import { formatDateShort, todayDateString } from "@/utils/formatDate";
 import { n } from "@/utils/scaling";
@@ -23,9 +23,7 @@ function addDays(dateStr: string, days: number): string {
 }
 
 export default function EntryDetailScreen() {
-  const { invertColors } = useInvertColors();
-  const bg = invertColors ? "white" : "black";
-  const textColor = invertColors ? "black" : "white";
+  const { bg, textColor } = useThemeColors();
 
   const { date } = useLocalSearchParams<{ date: string }>();
   const { entries, signals: enabledSignals, saveEntry } = useNourish();
