@@ -58,12 +58,7 @@ export function Header({
   };
 
   return (
-    <View
-      style={[
-        styles.header,
-        { backgroundColor: bg },
-      ]}
-    >
+    <View style={[styles.header, { backgroundColor: bg }]}>
       {renderLeft()}
       <StyledText numberOfLines={1} style={styles.title}>
         {headerTitle}
