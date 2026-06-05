@@ -6,9 +6,9 @@ import { Header } from "@/components/Header";
 import { StyledText } from "@/components/StyledText";
 import { SwipeBackContainer } from "@/components/SwipeBackContainer";
 import { useThemeColors } from "@/hooks/useThemeColors";
-import { foodDetailUrl } from "@/utils/usdaApi";
 import { goBack } from "@/utils/navigation";
 import { n } from "@/utils/scaling";
+import { foodDetailUrl } from "@/utils/usdaApi";
 
 const NUTRIENTS = [
   { id: 1008, label: "Calories", unit: "kcal" },

@@ -30,13 +30,19 @@ function processResults(foods: FoodResult[]): FoodResult[] {
   const seen = new Set<string>();
   const deduped = foods.filter((food) => {
     const key = food.description.toLowerCase();
-    if (seen.has(key)) return false;
+    if (seen.has(key)) {
+      return false;
+    }
     seen.add(key);
     return true;
   });
   return deduped.sort((a, b) => {
-    if (a.dataType === "SR Legacy" && b.dataType !== "SR Legacy") return -1;
-    if (a.dataType !== "SR Legacy" && b.dataType === "SR Legacy") return 1;
+    if (a.dataType === "SR Legacy" && b.dataType !== "SR Legacy") {
+      return -1;
+    }
+    if (a.dataType !== "SR Legacy" && b.dataType === "SR Legacy") {
+      return 1;
+    }
     return 0;
   });
 }
