@@ -71,7 +71,8 @@ export default function ContextPickerScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   tagList: {
-    paddingHorizontal: n(22),
+    paddingLeft: n(22),
+    paddingRight: n(32),
     paddingTop: n(4),
   },
   tagRow: {

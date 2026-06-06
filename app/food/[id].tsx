@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { TextInput as RNTextInput, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Header } from "@/components/Header";
+import { ScrollViewWithIndicator } from "@/components/ScrollViewWithIndicator";
 import { StyledText } from "@/components/StyledText";
 import { SwipeBackContainer } from "@/components/SwipeBackContainer";
 import { useThemeColors } from "@/hooks/useThemeColors";
@@ -13,8 +14,13 @@ import { foodDetailUrl } from "@/utils/usdaApi";
 const NUTRIENTS = [
   { id: 1008, label: "Calories", unit: "kcal" },
   { id: 1003, label: "Protein", unit: "g" },
-  { id: 1004, label: "Fat", unit: "g" },
   { id: 1005, label: "Carbs", unit: "g" },
+  { id: 1004, label: "Fat", unit: "g" },
+  { id: 1079, label: "Fiber", unit: "g" },
+  { id: 1235, label: "Added Sugar", unit: "g" },
+  { id: 1093, label: "Sodium", unit: "mg" },
+  { id: 1051, label: "Water", unit: "g" },
+  { id: 1057, label: "Caffeine", unit: "mg" },
 ] as const;
 
 interface FoodNutrient {
@@ -69,7 +75,11 @@ function resolveServing(data: FoodDetail): { scale: number; label: string } {
 export default function FoodDetailScreen() {
   const { bg, textColor } = useThemeColors();
 
-  const { id, name } = useLocalSearchParams<{ id: string; name: string }>();
+  const { id, name, category } = useLocalSearchParams<{
+    id: string;
+    name: string;
+    category: string;
+  }>();
 
   const [status, setStatus] = useState<Status>("loading");
   const [nutrients, setNutrients] = useState<FoodNutrient[]>([]);
@@ -136,44 +146,56 @@ export default function FoodDetailScreen() {
     }
 
     return (
-      <View style={styles.content}>
-        <View style={styles.servingRow}>
-          <StyledText style={[styles.perLabel, { color: textColor }]}>
-            per {servingLabel}
-          </StyledText>
-          <View style={styles.servingInputGroup}>
-            <RNTextInput
-              allowFontScaling={false}
-              blurOnSubmit
-              cursorColor={textColor}
-              keyboardType="decimal-pad"
-              onChangeText={setServingsText}
-              returnKeyType="done"
-              selectionColor={textColor}
-              style={[styles.servingInput, { color: textColor }]}
-              value={servingsText}
-            />
-            <StyledText style={[styles.servingUnit, { color: textColor }]}>
-              {servings === 1 ? "serving" : "servings"}
+      <ScrollViewWithIndicator textColor={textColor}>
+        <View style={styles.content}>
+          <View style={styles.titleBlock}>
+            <StyledText style={[styles.titleName, { color: textColor }]}>
+              {name}
             </StyledText>
+            {category && (
+              <StyledText style={[styles.titleCategory, { color: textColor }]}>
+                {category}
+              </StyledText>
+            )}
           </View>
-        </View>
-        {NUTRIENTS.map((nutrient) => {
-          const amount = getNutrientAmount(nutrient.id);
-          const display =
-            amount === null
-              ? "—"
-              : `${Math.round(amount * servingScale * servings)} ${nutrient.unit}`;
-          return (
-            <StyledText
-              key={nutrient.id}
-              style={[styles.nutrientLine, { color: textColor }]}
-            >
-              {nutrient.label} – {display}
+          <View style={styles.servingRow}>
+            <StyledText style={[styles.perLabel, { color: textColor }]}>
+              per {servingLabel}
             </StyledText>
-          );
-        })}
-      </View>
+            <View style={styles.servingInputGroup}>
+              <RNTextInput
+                allowFontScaling={false}
+                blurOnSubmit
+                cursorColor={textColor}
+                keyboardType="decimal-pad"
+                onChangeText={setServingsText}
+                returnKeyType="done"
+                selectionColor={textColor}
+                style={[styles.servingInput, { color: textColor }]}
+                value={servingsText}
+              />
+              <StyledText style={[styles.servingUnit, { color: textColor }]}>
+                {servings === 1 ? "serving" : "servings"}
+              </StyledText>
+            </View>
+          </View>
+          {NUTRIENTS.map((nutrient) => {
+            const amount = getNutrientAmount(nutrient.id);
+            if (amount === null) {
+              return null;
+            }
+            const display = `${Math.round(amount * servingScale * servings)} ${nutrient.unit}`;
+            return (
+              <StyledText
+                key={nutrient.id}
+                style={[styles.nutrientLine, { color: textColor }]}
+              >
+                {nutrient.label} – {display}
+              </StyledText>
+            );
+          })}
+        </View>
+      </ScrollViewWithIndicator>
     );
   };
 
@@ -183,7 +205,7 @@ export default function FoodDetailScreen() {
         edges={["top"]}
         style={[styles.container, { backgroundColor: bg }]}
       >
-        <Header headerTitle={name} />
+        <Header />
         {renderBody()}
       </SafeAreaView>
     </SwipeBackContainer>
@@ -193,16 +215,28 @@ export default function FoodDetailScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   stateContainer: {
-    paddingHorizontal: n(22),
+    paddingLeft: n(22),
+    paddingRight: n(32),
     paddingTop: n(32),
   },
   stateText: {
     fontSize: n(22),
   },
   content: {
-    paddingHorizontal: n(22),
+    paddingLeft: n(22),
+    paddingRight: n(32),
     paddingTop: n(24),
+    paddingBottom: n(40),
     gap: n(16),
+  },
+  titleBlock: {
+    gap: n(2),
+  },
+  titleName: {
+    fontSize: n(28),
+  },
+  titleCategory: {
+    fontSize: n(18),
   },
   servingRow: {
     alignItems: "baseline",

@@ -27,7 +27,12 @@ export default function SettingsScreen() {
             onPress={() => router.push("/settings/signals")}
             style={styles.row}
           >
-            <StyledText style={styles.rowText}>Signals</StyledText>
+            <StyledText style={[styles.rowText, { paddingBottom: 0 }]}>
+              Nutrition Focus
+            </StyledText>
+            <StyledText style={styles.rowDescription}>
+              choose up to three
+            </StyledText>
           </HapticPressable>
 
           <View style={styles.row}>
@@ -48,11 +53,17 @@ const styles = StyleSheet.create({
   row: {
     alignItems: "flex-start",
     flexDirection: "column",
-    paddingHorizontal: n(22),
+    paddingLeft: n(22),
+    paddingRight: n(32),
     paddingVertical: n(16),
   },
   rowText: {
     fontSize: n(30),
+    paddingBottom: n(10),
+  },
+  rowDescription: {
+    fontSize: n(16),
+    letterSpacing: 0.4,
     paddingBottom: n(10),
   },
 });
