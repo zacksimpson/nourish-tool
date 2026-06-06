@@ -1,6 +1,6 @@
 # Nourish
 
-> ⚠️ **This project is in early alpha and is not ready for general use.** Expect breaking changes, missing features, and rough edges. No APK is available for download yet.
+
 
 A mindfulness-first daily check-in tool for the Light Phone III.
 
@@ -10,21 +10,25 @@ Built with [vandamd's light-template](https://github.com/vandamd/light-template)
 
 ---
 
-## Planned Features
+## Features
 
 * Daily check-in with meal log, signal ratings, and context tags
 * Configurable nutrition signals (calories, protein, carbs, fat)
 * Context tags to track what affected your day (stress, sleep, travel, etc.)
-* Optional free-text note per entry
-* Scrollable log of past entries
-* Food lookup via USDA FoodData Central API
-* Respects LightOS theme (black/white mode)
+* Optional free-text note per entry to provide additional context
+* View your log of past entries to better understand your own patterns and habits
+* Nutrition Lookup - search for a food to find its nutrition facts, configurable by serving size
 
 ---
 
 ## Installing on Light Phone III
 
-This app is not yet available for download. Check back once a stable release is published.
+
+> ⚠️  **This project is in early development and is not ready for production.** Expect breaking changes, missing features, and rough edges. That being said, feel free to download and contribute to its development, and give feedback on its direction!
+
+I highly recommend using Obtainium to ensure you receive future updates and new features automatically. Just add [the repo URL,](https://github.com/zacksimpson/nourish-tool/) make sure you're able to install apps from unknown sources, and you're all set.
+
+Alternatively, you can download the latest APK from the Releases tab.
 
 ---
 
@@ -51,5 +55,5 @@ EAS will build the APK in the cloud and provide a download link.
 
 * [vandamd](https://github.com/vandamd) — [light-template](https://github.com/vandamd/light-template), the community Expo template this app is built on
 * [iamkory](https://www.reddit.com/user/iamkory/) — [LighterOS Figma design toolkit](https://www.figma.com/design/1k2PkAjOSet8f9jjVdhM2L/LighterOS?node-id=65-2018&t=3Qd2sXdySZCzTVtK-1), excellent reference for recreating the LightOS aesthetic
-* [The Light Phone](https://www.thelightphone.com) — for building a phone worth making apps for
 * [USDA FoodData Central](https://fdc.nal.usda.gov) — nutrition data provided by the U.S. Department of Agriculture
+* [The Light Phone](https://www.thelightphone.com) — for building a phone worth making apps for
