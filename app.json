@@ -2,7 +2,7 @@
   "expo": {
     "name": "Nourish",
     "slug": "nourish-tool",
-    "version": "0.1.0-beta.1",
+    "version": "0.1.0",
     "orientation": "portrait",
     "scheme": "nourish",
     "icon": "./assets/images/icon.png",
