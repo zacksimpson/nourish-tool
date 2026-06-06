@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { HapticPressable } from "@/components/HapticPressable";
 import { Header } from "@/components/Header";
 import { StyledText } from "@/components/StyledText";
+import { useNourish } from "@/contexts/NourishContext";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import { todayDateString } from "@/utils/formatDate";
 import { n } from "@/utils/scaling";
@@ -27,25 +28,33 @@ const MONTH_NAMES = [
 
 export default function HistoryScreen() {
   const { bg, textColor } = useThemeColors();
+  const { entries } = useNourish();
 
-  const [viewYear, setViewYear] = useState(() => new Date().getFullYear());
-  const [viewMonth, setViewMonth] = useState(() => new Date().getMonth());
+  const [viewDate, setViewDate] = useState(() => {
+    const today = todayDateString();
+    return {
+      year: Number.parseInt(today.slice(0, 4), 10),
+      month: Number.parseInt(today.slice(5, 7), 10) - 1,
+    };
+  });
 
   const shiftMonth = (delta: number) => {
-    const d = new Date(viewYear, viewMonth + delta, 1);
-    setViewYear(d.getFullYear());
-    setViewMonth(d.getMonth());
+    setViewDate(({ year, month }) => {
+      const d = new Date(year, month + delta, 1);
+      return { year: d.getFullYear(), month: d.getMonth() };
+    });
   };
 
   const handleSelectDate = (date: string) => {
     router.push({ pathname: "/entry/[date]", params: { date } });
   };
 
-  const todayStr = todayDateString();
+  const todayStr = useMemo(() => todayDateString(), []);
 
   const rows = useMemo(() => {
-    const firstDay = new Date(viewYear, viewMonth, 1).getDay();
-    const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+    const { year, month } = viewDate;
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
     const cells: (number | null)[] = [];
     for (let i = 0; i < firstDay; i++) {
       cells.push(null);
@@ -55,15 +64,16 @@ export default function HistoryScreen() {
     }
     const result: (number | null)[][] = [];
     for (let i = 0; i < cells.length; i += 7) {
-      result.push(
-        cells
-          .slice(i, i + 7)
-          .concat(new Array(7).fill(null))
-          .slice(0, 7)
-      );
+      const row = cells.slice(i, i + 7);
+      while (row.length < 7) {
+        row.push(null);
+      }
+      result.push(row);
     }
     return result;
-  }, [viewYear, viewMonth]);
+  }, [viewDate]);
+
+  const { year: viewYear, month: viewMonth } = viewDate;
 
   return (
     <SafeAreaView
@@ -103,6 +113,7 @@ export default function HistoryScreen() {
                 }
                 const dateStr = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
                 const isToday = dateStr === todayStr;
+                const isLogged = Boolean(entries[dateStr]);
                 return (
                   <HapticPressable
                     key={`d-${day}`}
@@ -118,6 +129,11 @@ export default function HistoryScreen() {
                           styles.todayUnderline,
                           { backgroundColor: textColor },
                         ]}
+                      />
+                    )}
+                    {isLogged && !isToday && (
+                      <View
+                        style={[styles.dot, { backgroundColor: textColor }]}
                       />
                     )}
                   </HapticPressable>
@@ -172,5 +188,13 @@ const styles = StyleSheet.create({
     bottom: n(7),
     width: n(14),
     height: n(1.5),
+  },
+  dot: {
+    position: "absolute",
+    bottom: n(7),
+    alignSelf: "center",
+    width: n(4),
+    height: n(4),
+    borderRadius: n(2),
   },
 });
