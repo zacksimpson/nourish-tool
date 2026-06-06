@@ -13,7 +13,7 @@ import { n } from "@/utils/scaling";
 import { searchUrl } from "@/utils/usdaApi";
 
 function toTitleCase(str: string): string {
-  return str.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+  return str.toLowerCase().replace(/(?<!')\b\w/g, (c) => c.toUpperCase());
 }
 
 interface FoodResult {
@@ -89,7 +89,11 @@ export default function SearchResultsScreen() {
   const handleSelectFood = (food: FoodResult) => {
     router.push({
       pathname: "/food/[id]",
-      params: { id: String(food.fdcId), name: toTitleCase(food.description) },
+      params: {
+        id: String(food.fdcId),
+        name: toTitleCase(food.description),
+        category: food.brandOwner ?? food.foodCategory ?? food.dataType,
+      },
     });
   };
 
@@ -167,14 +171,16 @@ export default function SearchResultsScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   stateContainer: {
-    paddingHorizontal: n(22),
+    paddingLeft: n(22),
+    paddingRight: n(32),
     paddingTop: n(32),
   },
   stateText: {
     fontSize: n(22),
   },
   row: {
-    paddingHorizontal: n(22),
+    paddingLeft: n(22),
+    paddingRight: n(32),
     paddingVertical: n(16),
   },
   foodName: {

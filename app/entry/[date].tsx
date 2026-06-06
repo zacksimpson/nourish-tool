@@ -297,7 +297,8 @@ const styles = StyleSheet.create({
     paddingTop: n(12),
   },
   field: {
-    paddingHorizontal: n(28),
+    paddingLeft: n(28),
+    paddingRight: n(32),
     paddingVertical: n(13),
   },
   fieldLabel: {
@@ -309,7 +310,8 @@ const styles = StyleSheet.create({
     fontSize: n(22),
   },
   emptyState: {
-    paddingHorizontal: n(28),
+    paddingLeft: n(28),
+    paddingRight: n(32),
     paddingTop: n(32),
   },
   emptyText: {
