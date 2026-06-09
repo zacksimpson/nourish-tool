@@ -24,6 +24,15 @@ export default function SettingsScreen() {
 
         <ScrollView overScrollMode="never" showsVerticalScrollIndicator={false}>
           <HapticPressable
+            onPress={() => router.push("/settings/notifications")}
+            style={styles.row}
+          >
+            <StyledText style={[styles.rowText, { paddingBottom: 0 }]}>
+              Notifications
+            </StyledText>
+          </HapticPressable>
+
+          <HapticPressable
             onPress={() => router.push("/settings/signals")}
             style={styles.row}
           >
