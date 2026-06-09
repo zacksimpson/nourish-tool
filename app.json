@@ -8,7 +8,12 @@
     "icon": "./assets/images/icon.png",
     "android": {
       "backgroundColor": "#000000",
-      "package": "com.zacksimpson.nourish"
+      "package": "com.zacksimpson.nourish",
+      "permissions": [
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.RECEIVE_BOOT_COMPLETED"
+      ]
     },
     "plugins": [
       "expo-router",
@@ -19,6 +24,14 @@
             "./assets/fonts/PublicSans-Regular.ttf",
             "./assets/fonts/PublicSans-Thin.ttf"
           ]
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#000000",
+          "androidMode": "default"
         }
       ],
       "./plugins/withAndroidConfigChanges",
