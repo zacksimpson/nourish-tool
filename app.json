@@ -15,7 +15,10 @@
       [
         "expo-font",
         {
-          "fonts": ["./assets/fonts/PublicSans-Regular.ttf"]
+          "fonts": [
+            "./assets/fonts/PublicSans-Regular.ttf",
+            "./assets/fonts/PublicSans-Thin.ttf"
+          ]
         }
       ],
       "./plugins/withAndroidConfigChanges",

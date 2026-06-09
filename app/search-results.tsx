@@ -9,41 +9,30 @@ import { StyledText } from "@/components/StyledText";
 import { SwipeBackContainer } from "@/components/SwipeBackContainer";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import { goBack } from "@/utils/navigation";
+import { offFetch, searchUrl } from "@/utils/offApi";
 import { n } from "@/utils/scaling";
-import { searchUrl } from "@/utils/usdaApi";
-
-function toTitleCase(str: string): string {
-  return str.toLowerCase().replace(/(?<!')\b\w/g, (c) => c.toUpperCase());
-}
 
 interface FoodResult {
-  brandOwner?: string;
-  dataType: string;
-  description: string;
-  fdcId: number;
-  foodCategory?: string;
+  brands?: string;
+  code: string;
+  product_name?: string;
 }
 
 type Status = "loading" | "success" | "error" | "empty";
 
-function processResults(foods: FoodResult[]): FoodResult[] {
+function processResults(products: FoodResult[]): FoodResult[] {
   const seen = new Set<string>();
-  const deduped = foods.filter((food) => {
-    const key = food.description.toLowerCase();
+  return products.filter((p) => {
+    const name = p.product_name?.trim();
+    if (!name) {
+      return false;
+    }
+    const key = name.toLowerCase();
     if (seen.has(key)) {
       return false;
     }
     seen.add(key);
     return true;
-  });
-  return deduped.sort((a, b) => {
-    if (a.dataType === "SR Legacy" && b.dataType !== "SR Legacy") {
-      return -1;
-    }
-    if (a.dataType !== "SR Legacy" && b.dataType === "SR Legacy") {
-      return 1;
-    }
-    return 0;
   });
 }
 
@@ -65,15 +54,15 @@ export default function SearchResultsScreen() {
 
     setStatus("loading");
 
-    fetch(url)
+    offFetch(url)
       .then((res) => {
         if (!res.ok) {
-          throw new Error("Search failed");
+          throw new Error(`Search failed: ${res.status}`);
         }
-        return res.json() as Promise<{ foods: FoodResult[] }>;
+        return res.json() as Promise<{ products: FoodResult[] }>;
       })
       .then((data) => {
-        const processed = processResults(data.foods);
+        const processed = processResults(data.products ?? []);
         if (processed.length === 0) {
           setStatus("empty");
         } else {
@@ -81,7 +70,8 @@ export default function SearchResultsScreen() {
           setStatus("success");
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("OFF search error:", err);
         setStatus("error");
       });
   }, [query]);
@@ -90,9 +80,9 @@ export default function SearchResultsScreen() {
     router.push({
       pathname: "/food/[id]",
       params: {
-        id: String(food.fdcId),
-        name: toTitleCase(food.description),
-        category: food.brandOwner ?? food.foodCategory ?? food.dataType,
+        id: food.code,
+        name: food.product_name ?? "",
+        category: food.brands ?? "",
       },
     });
   };
@@ -132,7 +122,7 @@ export default function SearchResultsScreen() {
       <ScrollViewWithIndicator textColor={textColor}>
         {results.map((food) => (
           <HapticPressable
-            key={food.fdcId}
+            key={food.code}
             onPress={() => handleSelectFood(food)}
             style={styles.row}
           >
@@ -140,14 +130,16 @@ export default function SearchResultsScreen() {
               numberOfLines={1}
               style={[styles.foodName, { color: textColor }]}
             >
-              {toTitleCase(food.description)}
+              {food.product_name}
             </StyledText>
-            <StyledText
-              numberOfLines={1}
-              style={[styles.foodCategory, { color: textColor }]}
-            >
-              {food.brandOwner ?? food.foodCategory ?? food.dataType}
-            </StyledText>
+            {food.brands ? (
+              <StyledText
+                numberOfLines={1}
+                style={[styles.foodCategory, { color: textColor }]}
+              >
+                {food.brands}
+              </StyledText>
+            ) : null}
           </HapticPressable>
         ))}
         <View style={styles.bottomPad} />
