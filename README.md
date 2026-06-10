@@ -6,8 +6,6 @@ A mindfulness-first daily check-in tool for the Light Phone III.
 
 Nourish is not a calorie tracker. It's a lightweight daily log for people who want to be more intentional about what they eat – connecting eating habits with context like stress, sleep, and how the day went. Built to be used once a day, in under a minute.
 
-Built with [vandamd's light-template](https://github.com/vandamd/light-template) – a community-made Expo template for building LightOS-style apps for the Light Phone III.
-
 ---
 
 ## Features
@@ -22,11 +20,6 @@ Built with [vandamd's light-template](https://github.com/vandamd/light-template)
 ---
 
 ## Installing on Light Phone III
-
-
-> [!WARNING]
-> **This project is in early development and is not ready for production.** Expect noisy search results from Nutrition Lookup. That being said, feel free to download and contribute to its development, and give feedback on its direction!
-
 I highly recommend using Obtainium to ensure you receive future updates and new features automatically. Just add [the repo URL,](https://github.com/zacksimpson/nourish-tool/) make sure you're able to install apps from unknown sources, and you're all set.
 
 Alternatively, you can download the latest APK from the Releases tab.
