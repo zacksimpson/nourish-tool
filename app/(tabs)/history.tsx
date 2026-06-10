@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
   },
   todayUnderline: {
     position: "absolute",
-    bottom: n(7),
+    bottom: n(8),
     width: n(14),
     height: n(1.5),
   },

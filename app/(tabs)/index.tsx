@@ -1,4 +1,5 @@
 import { useFocusEffect } from "@react-navigation/native";
+import { router } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -30,7 +31,6 @@ export default function LogScreen() {
   const [selectedTags, setSelectedTags] = useState<Set<TagId>>(new Set());
   const [note, setNote] = useState("");
   const [toastVisible, setToastVisible] = useState(false);
-
   const initializedRef = useRef(false);
 
   useEffect(() => {
@@ -80,6 +80,25 @@ export default function LogScreen() {
       Object.values(signalRatings).some((r) => r !== null);
 
     if (!hasContent) {
+      return;
+    }
+
+    const existing = entries[today];
+    const hasChanged =
+      !existing ||
+      breakfast !== existing.breakfast ||
+      lunch !== existing.lunch ||
+      dinner !== existing.dinner ||
+      snacks !== existing.snacks ||
+      note !== existing.note ||
+      selectedTags.size !== existing.tags.length ||
+      existing.tags.some((t) => !selectedTags.has(t as TagId)) ||
+      enabledSignals.some(
+        (s) =>
+          (signalRatings[s.id] ?? null) !== (existing.signals[s.id] ?? null)
+      );
+
+    if (!hasChanged) {
       return;
     }
 
@@ -139,7 +158,10 @@ export default function LogScreen() {
 
       <Toast
         message="logged"
-        onHide={() => setToastVisible(false)}
+        onHide={() => {
+          setToastVisible(false);
+          router.push(`/entry/${today}`);
+        }}
         visible={toastVisible}
       />
     </SafeAreaView>
