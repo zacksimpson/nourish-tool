@@ -8,6 +8,7 @@ import { EntryForm, type SignalRating } from "@/components/EntryForm";
 import { Header } from "@/components/Header";
 import { ScrollViewWithIndicator } from "@/components/ScrollViewWithIndicator";
 import { StyledText } from "@/components/StyledText";
+import { Toast } from "@/components/Toast";
 import { SIGNAL_OPTIONS, useNourish } from "@/contexts/NourishContext";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import { consumeResult } from "@/utils/contextPickerStore";
@@ -36,6 +37,7 @@ export default function EntryDetailScreen() {
   const currentEntry = entries[currentDate];
 
   const [isEditing, setIsEditing] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
   const isEditingRef = useRef(isEditing);
   isEditingRef.current = isEditing;
 
@@ -117,6 +119,26 @@ export default function EntryDetailScreen() {
       return;
     }
 
+    const hasChanged =
+      !currentEntry ||
+      editBreakfast !== currentEntry.breakfast ||
+      editLunch !== currentEntry.lunch ||
+      editDinner !== currentEntry.dinner ||
+      editSnacks !== currentEntry.snacks ||
+      editNote !== currentEntry.note ||
+      editSelectedTags.size !== currentEntry.tags.length ||
+      currentEntry.tags.some((t) => !editSelectedTags.has(t as TagId)) ||
+      enabledSignals.some(
+        (s) =>
+          (editSignalRatings[s.id] ?? null) !==
+          (currentEntry.signals[s.id] ?? null)
+      );
+
+    if (!hasChanged) {
+      setIsEditing(false);
+      return;
+    }
+
     saveEntry({
       date: currentDate,
       breakfast: editBreakfast,
@@ -128,7 +150,7 @@ export default function EntryDetailScreen() {
       note: editNote,
       savedAt: Date.now(),
     });
-    setIsEditing(false);
+    setToastVisible(true);
   };
 
   const toggleSignal = (signalId: string, rating: SignalRating) => {
@@ -285,6 +307,15 @@ export default function EntryDetailScreen() {
           }
         />
         {renderContent()}
+
+        <Toast
+          message="updated"
+          onHide={() => {
+            setToastVisible(false);
+            setIsEditing(false);
+          }}
+          visible={toastVisible}
+        />
       </SafeAreaView>
     </GestureDetector>
   );
