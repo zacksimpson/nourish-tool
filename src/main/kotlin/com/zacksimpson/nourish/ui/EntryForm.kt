@@ -73,7 +73,7 @@ fun EntryForm(
             onClick = onEditContext,
         )
 
-        UnderlinedField(value = note, placeholder = "Add notes", onClick = onEditNote)
+        UnderlinedField(label = "notes:", value = note, placeholder = "Add notes", onClick = onEditNote)
 
         Spacer(modifier = Modifier.height(BOTTOM_PAD_PX.designPxToDp()))
     }
