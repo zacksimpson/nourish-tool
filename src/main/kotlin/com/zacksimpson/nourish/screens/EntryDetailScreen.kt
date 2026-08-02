@@ -27,6 +27,7 @@ import com.thelightphone.sdk.ui.LightTopBar
 import com.thelightphone.sdk.ui.LightTopBarCenter
 import com.thelightphone.sdk.ui.gridUnitsAsDp
 import com.zacksimpson.nourish.DataState
+import com.zacksimpson.nourish.data.AppDataStore
 import com.zacksimpson.nourish.data.DEFAULT_SIGNALS
 import com.zacksimpson.nourish.data.Entry
 import com.zacksimpson.nourish.data.NourishRepository
@@ -35,7 +36,6 @@ import com.zacksimpson.nourish.data.SignalRating
 import com.zacksimpson.nourish.data.formatDateShort
 import com.zacksimpson.nourish.data.getTagLabel
 import com.zacksimpson.nourish.data.todayDateString
-import com.zacksimpson.nourish.dataStateIn
 import com.zacksimpson.nourish.ui.DesignText
 import com.zacksimpson.nourish.ui.EntryForm
 import com.zacksimpson.nourish.ui.NourishTheme
@@ -46,13 +46,14 @@ import com.zacksimpson.nourish.ui.designPxToDp
 import com.zacksimpson.nourish.ui.ratingLabel
 import java.time.LocalDate
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class EntryDetailViewModel(
     private val repo: NourishRepository,
+    val state: StateFlow<DataState>,
     initialDate: String,
 ) : LightViewModel<Unit>() {
-    val state = repo.dataStateIn(viewModelScope)
     val currentDate = MutableStateFlow(initialDate)
     val isEditing = MutableStateFlow(false)
 
@@ -151,7 +152,11 @@ class EntryDetailScreen(
     override val viewModelClass: Class<EntryDetailViewModel>
         get() = EntryDetailViewModel::class.java
 
-    override fun createViewModel() = EntryDetailViewModel(NourishRepository(lightContext.dataStore), initialDate)
+    override fun createViewModel() = EntryDetailViewModel(
+        AppDataStore.nourishRepository(lightContext.dataStore),
+        AppDataStore.nourishState(lightContext.dataStore),
+        initialDate,
+    )
 
     @Composable
     override fun Content() {
@@ -185,6 +190,8 @@ class EntryDetailScreen(
                         onClick = { if (isEditing) viewModel.cancelEdit() else goBack(Unit) },
                     ),
                     center = LightTopBarCenter.Text(formatDateShort(currentDate)),
+                    // ACCEPT and PENCIL's artwork fills its box edge-to-edge, unlike BACK's —
+                    // sized down to match BACK's visual weight elsewhere in the app.
                     rightButton = if (isEditing) {
                         LightBarButton.LightIcon(
                             LightIcons.ACCEPT,
@@ -196,9 +203,14 @@ class EntryDetailScreen(
                                     )
                                 }
                             },
+                            sizeUnits = 1.5f,
                         )
                     } else {
-                        LightBarButton.LightIcon(LightIcons.PENCIL, onClick = { viewModel.startEdit(currentEntry) })
+                        LightBarButton.LightIcon(
+                            LightIcons.PENCIL,
+                            onClick = { viewModel.startEdit(currentEntry) },
+                            sizeUnits = 1.5f,
+                        )
                     },
                     modifier = Modifier.padding(bottom = 1f.gridUnitsAsDp()),
                 )
@@ -275,6 +287,8 @@ class EntryDetailScreen(
                                 },
                             )
                         }
+
+                        ready == null -> Unit
 
                         currentEntry == null -> EmptyEntryState()
 

@@ -38,7 +38,9 @@ fun LogTab(
     Column(modifier = Modifier.fillMaxSize()) {
         LightTopBar(
             center = LightTopBarCenter.Text(dateLabel),
-            rightButton = LightBarButton.LightIcon(LightIcons.ACCEPT, onClick = onSave),
+            // ACCEPT's artwork fills its box edge-to-edge, unlike BACK's — sized down
+            // to match BACK's visual weight elsewhere in the app.
+            rightButton = LightBarButton.LightIcon(LightIcons.ACCEPT, onClick = onSave, sizeUnits = 1.5f),
             modifier = Modifier.padding(bottom = 1f.gridUnitsAsDp()),
         )
         LightScrollView(

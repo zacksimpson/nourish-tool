@@ -19,6 +19,7 @@ import com.thelightphone.sdk.ui.LightBarButton
 import com.thelightphone.sdk.ui.LightBottomBar
 import com.thelightphone.sdk.ui.LightIcons
 import com.thelightphone.sdk.ui.LightThemeTokens
+import com.zacksimpson.nourish.data.AppDataStore
 import com.zacksimpson.nourish.data.DEFAULT_SIGNALS
 import com.zacksimpson.nourish.data.Entry
 import com.zacksimpson.nourish.data.NourishRepository
@@ -29,6 +30,7 @@ import com.zacksimpson.nourish.screens.ContextPickerScreen
 import com.zacksimpson.nourish.screens.EntryDetailScreen
 import com.zacksimpson.nourish.screens.HistoryTab
 import com.zacksimpson.nourish.screens.LogTab
+import com.zacksimpson.nourish.screens.SearchScreen
 import com.zacksimpson.nourish.screens.SettingsScreen
 import com.zacksimpson.nourish.ui.NourishTheme
 import com.zacksimpson.nourish.ui.TextEditorRequest
@@ -36,13 +38,16 @@ import com.zacksimpson.nourish.ui.TextEditorScreen
 import com.zacksimpson.nourish.ui.ToastScreen
 import java.time.YearMonth
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 enum class Tab { LOG, HISTORY }
 
-class MainViewModel(private val repo: NourishRepository) : LightViewModel<Unit>() {
+class MainViewModel(
+    private val repo: NourishRepository,
+    val state: StateFlow<DataState>,
+) : LightViewModel<Unit>() {
     val selectedTab = MutableStateFlow(Tab.LOG)
-    val state = repo.dataStateIn(viewModelScope)
 
     val today: String = todayDateString()
 
@@ -57,6 +62,7 @@ class MainViewModel(private val repo: NourishRepository) : LightViewModel<Unit>(
     val viewYearMonth = MutableStateFlow(YearMonth.now())
 
     private var loadedFromEntry = false
+    private var loadedEntry: Entry? = null
 
     fun select(tab: Tab) {
         selectedTab.value = tab
@@ -86,6 +92,7 @@ class MainViewModel(private val repo: NourishRepository) : LightViewModel<Unit>(
     fun loadTodayEntryIfNeeded(entry: Entry?) {
         if (loadedFromEntry || entry == null) return
         loadedFromEntry = true
+        loadedEntry = entry
         breakfast.value = entry.breakfast
         lunch.value = entry.lunch
         dinner.value = entry.dinner
@@ -95,25 +102,40 @@ class MainViewModel(private val repo: NourishRepository) : LightViewModel<Unit>(
         tags.value = entry.tags
     }
 
-    fun saveTodayEntry(onSaved: () -> Unit) {
+    fun saveTodayEntry(enabledSignals: List<String>, onSaved: () -> Unit, onUnchanged: () -> Unit) {
         val hasContent = breakfast.value.isNotBlank() || lunch.value.isNotBlank() ||
             dinner.value.isNotBlank() || snacks.value.isNotBlank() || note.value.isNotBlank() ||
             tags.value.isNotEmpty() || signalRatings.value.isNotEmpty()
         if (!hasContent) return
+
+        val existing = loadedEntry
+        val hasChanged = existing == null ||
+            breakfast.value != existing.breakfast ||
+            lunch.value != existing.lunch ||
+            dinner.value != existing.dinner ||
+            snacks.value != existing.snacks ||
+            note.value != existing.note ||
+            tags.value.toSet() != existing.tags.toSet() ||
+            enabledSignals.any { id -> signalRatings.value[id] != existing.signals[id] }
+        if (!hasChanged) {
+            onUnchanged()
+            return
+        }
+
+        val entry = Entry(
+            date = today,
+            breakfast = breakfast.value,
+            lunch = lunch.value,
+            dinner = dinner.value,
+            snacks = snacks.value,
+            signals = signalRatings.value,
+            tags = tags.value,
+            note = note.value,
+            savedAt = System.currentTimeMillis(),
+        )
         viewModelScope.launch {
-            repo.saveEntry(
-                Entry(
-                    date = today,
-                    breakfast = breakfast.value,
-                    lunch = lunch.value,
-                    dinner = dinner.value,
-                    snacks = snacks.value,
-                    signals = signalRatings.value,
-                    tags = tags.value,
-                    note = note.value,
-                    savedAt = System.currentTimeMillis(),
-                ),
-            )
+            repo.saveEntry(entry)
+            loadedEntry = entry
             onSaved()
         }
     }
@@ -127,7 +149,10 @@ class MainScreen(sealedActivity: SealedLightActivity) :
     override val viewModelClass: Class<MainViewModel>
         get() = MainViewModel::class.java
 
-    override fun createViewModel() = MainViewModel(NourishRepository(lightContext.dataStore))
+    override fun createViewModel() = MainViewModel(
+        AppDataStore.nourishRepository(lightContext.dataStore),
+        AppDataStore.nourishState(lightContext.dataStore),
+    )
 
     @Composable
     override fun Content() {
@@ -154,10 +179,11 @@ class MainScreen(sealedActivity: SealedLightActivity) :
                     .background(LightThemeTokens.colors.background),
             ) {
                 Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                    val enabledSignals = (dataState as? DataState.Ready)?.data?.signals ?: DEFAULT_SIGNALS
                     when (tab) {
                         Tab.LOG -> LogTab(
                             dateLabel = formatDateShort(viewModel.today),
-                            enabledSignals = (dataState as? DataState.Ready)?.data?.signals ?: DEFAULT_SIGNALS,
+                            enabledSignals = enabledSignals,
                             breakfast = breakfast,
                             lunch = lunch,
                             dinner = dinner,
@@ -203,14 +229,20 @@ class MainScreen(sealedActivity: SealedLightActivity) :
                                 )
                             },
                             onSave = {
-                                viewModel.saveTodayEntry {
-                                    navigateTo(
-                                        screenFactory = { ToastScreen(it, "logged") },
-                                        resultCallback = {
-                                            navigateTo(screenFactory = { EntryDetailScreen(it, viewModel.today) })
-                                        },
-                                    )
-                                }
+                                viewModel.saveTodayEntry(
+                                    enabledSignals = enabledSignals,
+                                    onSaved = {
+                                        navigateTo(
+                                            screenFactory = { ToastScreen(it, "logged") },
+                                            resultCallback = {
+                                                navigateTo(screenFactory = { EntryDetailScreen(it, viewModel.today) })
+                                            },
+                                        )
+                                    },
+                                    onUnchanged = {
+                                        navigateTo(screenFactory = { EntryDetailScreen(it, viewModel.today) })
+                                    },
+                                )
                             },
                         )
 
@@ -240,7 +272,10 @@ class MainScreen(sealedActivity: SealedLightActivity) :
                                 viewModel.select(if (tab == Tab.HISTORY) Tab.LOG else Tab.HISTORY)
                             },
                         ),
-                        LightBarButton.LightIcon(LightIcons.SEARCH, onClick = {}),
+                        LightBarButton.LightIcon(
+                            LightIcons.SEARCH,
+                            onClick = { navigateTo(screenFactory = { SearchScreen(it) }) },
+                        ),
                     ),
                 )
             }

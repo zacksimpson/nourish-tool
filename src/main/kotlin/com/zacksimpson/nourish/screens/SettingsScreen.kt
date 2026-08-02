@@ -22,16 +22,15 @@ import com.thelightphone.sdk.ui.LightTopBarCenter
 import com.thelightphone.sdk.ui.gridUnitsAsDp
 import com.thelightphone.sdk.ui.lightClickable
 import com.zacksimpson.nourish.DataState
+import com.zacksimpson.nourish.data.AppDataStore
 import com.zacksimpson.nourish.data.NotificationsRepository
 import com.zacksimpson.nourish.data.NotificationsSettings
 import com.zacksimpson.nourish.data.NourishRepository
-import com.zacksimpson.nourish.dataStateIn
 import com.zacksimpson.nourish.ui.DesignText
 import com.zacksimpson.nourish.ui.NourishTheme
 import com.zacksimpson.nourish.ui.designPxToDp
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 private const val ROW_LABEL_SIZE_PX = 30f
@@ -55,11 +54,10 @@ sealed interface SettingsMode {
 class SettingsViewModel(
     private val notificationsRepo: NotificationsRepository,
     private val nourishRepo: NourishRepository,
+    val notificationsSettings: StateFlow<NotificationsSettings>,
+    val nourishState: StateFlow<DataState>,
 ) : LightViewModel<Unit>() {
     val mode = MutableStateFlow<SettingsMode>(SettingsMode.Home)
-    val notificationsSettings = notificationsRepo.settings
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
-    val nourishState = nourishRepo.dataStateIn(viewModelScope)
 
     fun openNotifications() {
         mode.value = SettingsMode.Notifications
@@ -70,7 +68,7 @@ class SettingsViewModel(
     }
 
     fun openTimePicker() {
-        mode.value = SettingsMode.TimePicker(notificationsSettings.value?.reminderTime)
+        mode.value = SettingsMode.TimePicker(notificationsSettings.value.reminderTime)
     }
 
     fun backToHome() {
@@ -108,8 +106,10 @@ class SettingsScreen(sealedActivity: SealedLightActivity) :
         get() = SettingsViewModel::class.java
 
     override fun createViewModel() = SettingsViewModel(
-        NotificationsRepository(lightContext.dataStore),
-        NourishRepository(lightContext.dataStore),
+        AppDataStore.notificationsRepository(lightContext.dataStore),
+        AppDataStore.nourishRepository(lightContext.dataStore),
+        AppDataStore.notificationsState(lightContext.dataStore),
+        AppDataStore.nourishState(lightContext.dataStore),
     )
 
     @Composable
@@ -124,15 +124,13 @@ class SettingsScreen(sealedActivity: SealedLightActivity) :
 
                 SettingsMode.Notifications -> {
                     val settings by viewModel.notificationsSettings.collectAsState()
-                    settings?.let {
-                        NotificationsContent(
-                            settings = it,
-                            onBack = { viewModel.backToHome() },
-                            onSetEnabled = { v -> viewModel.setEnabled(v) },
-                            onSetReminderEnabled = { v -> viewModel.setReminderEnabled(v) },
-                            onOpenTimePicker = { viewModel.openTimePicker() },
-                        )
-                    }
+                    NotificationsContent(
+                        settings = settings,
+                        onBack = { viewModel.backToHome() },
+                        onSetEnabled = { v -> viewModel.setEnabled(v) },
+                        onSetReminderEnabled = { v -> viewModel.setReminderEnabled(v) },
+                        onOpenTimePicker = { viewModel.openTimePicker() },
+                    )
                 }
 
                 SettingsMode.Signals -> {
