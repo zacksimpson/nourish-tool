@@ -36,9 +36,8 @@ import kotlinx.coroutines.launch
 private const val ROW_LABEL_SIZE_PX = 30f
 private const val ROW_DESCRIPTION_SIZE_PX = 16f
 private const val ROW_HORIZONTAL_PADDING_PX = 22f
-private const val ROW_RIGHT_PADDING_PX = 32f
 private const val ROW_VERTICAL_PADDING_PX = 16f
-private const val ROW_LABEL_DESCRIPTION_GAP_PX = 2f
+private const val ROW_LABEL_DESCRIPTION_GAP_PX = 0f
 private const val MAX_SIGNALS = 3
 
 /** All settings screens are modes of this one — no navigateTo push between them, so
@@ -193,10 +192,8 @@ private fun SettingsRow(label: String, onClick: () -> Unit, description: String?
             .fillMaxWidth()
             .lightClickable(onClick = onClick)
             .padding(
-                start = ROW_HORIZONTAL_PADDING_PX.designPxToDp(),
-                end = ROW_RIGHT_PADDING_PX.designPxToDp(),
-                top = ROW_VERTICAL_PADDING_PX.designPxToDp(),
-                bottom = ROW_VERTICAL_PADDING_PX.designPxToDp(),
+                horizontal = ROW_HORIZONTAL_PADDING_PX.designPxToDp(),
+                vertical = ROW_VERTICAL_PADDING_PX.designPxToDp(),
             ),
     ) {
         DesignText(text = label, fontSizeDesignPx = ROW_LABEL_SIZE_PX)

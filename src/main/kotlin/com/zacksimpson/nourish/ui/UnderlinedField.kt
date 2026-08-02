@@ -17,7 +17,7 @@ private const val UNDERLINE_THICKNESS_PX = 3f
 private const val HORIZONTAL_PADDING_PX = 28f
 private const val VERTICAL_PADDING_PX = 13f
 private const val LABEL_GAP_PX = 6f
-private const val VALUE_TO_UNDERLINE_GAP_PX = 6f
+private const val VALUE_TO_UNDERLINE_GAP_PX = 4f
 
 /** Label-over-underlined-value field row; tap opens the full-screen editor for it. */
 @Composable
