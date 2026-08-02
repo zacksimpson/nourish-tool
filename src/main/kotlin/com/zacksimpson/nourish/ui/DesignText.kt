@@ -5,7 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.TextUnit
 import com.thelightphone.sdk.ui.LightThemeTokens
 
 /**
@@ -19,6 +21,8 @@ fun DesignText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     underline: Boolean = false,
+    align: TextAlign? = null,
+    letterSpacingDesignPx: Float = 0f,
 ) {
     Text(
         text = text,
@@ -29,6 +33,8 @@ fun DesignText(
             fontWeight = fontWeight,
             fontSize = fontSizeDesignPx.designPxToSp(),
             textDecoration = if (underline) TextDecoration.Underline else null,
+            textAlign = align ?: TextAlign.Unspecified,
+            letterSpacing = if (letterSpacingDesignPx != 0f) letterSpacingDesignPx.designPxToSp() else TextUnit.Unspecified,
         ),
     )
 }
