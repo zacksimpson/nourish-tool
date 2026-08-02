@@ -19,6 +19,14 @@ fun cleanServingLabel(raw: String): String {
     return DECIMAL_NUMBER.replace(commaFixed) { m -> formatRound1(m.value.toDouble()) }
 }
 
+// OFF (like USDA before it) returns names/brands in inconsistent casing —
+// some fully caps, some mixed. Title-case normalizes it; the apostrophe
+// lookbehind keeps "don't" from becoming "Don'T".
+private val TITLE_CASE_WORD_START = Regex("(?<!')\\b\\w")
+
+fun toTitleCase(str: String): String =
+    str.lowercase().replace(TITLE_CASE_WORD_START) { it.value.uppercase() }
+
 data class ServingInfo(val scale: Double, val label: String)
 
 fun resolveServing(detail: FoodDetail): ServingInfo {

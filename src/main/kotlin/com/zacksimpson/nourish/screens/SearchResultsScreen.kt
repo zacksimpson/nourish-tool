@@ -2,8 +2,10 @@ package com.zacksimpson.nourish.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,8 +25,10 @@ import com.thelightphone.sdk.ui.gridUnitsAsDp
 import com.thelightphone.sdk.ui.lightClickable
 import com.zacksimpson.nourish.data.FoodResult
 import com.zacksimpson.nourish.data.OffApi
+import com.zacksimpson.nourish.data.toTitleCase
 import com.zacksimpson.nourish.ui.DesignText
 import com.zacksimpson.nourish.ui.NourishTheme
+import com.zacksimpson.nourish.ui.designPxToDp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -101,14 +105,19 @@ class SearchResultsScreen(sealedActivity: SealedLightActivity, private val query
                                             )
                                         },
                                     )
-                                    .padding(horizontal = 1.5f.gridUnitsAsDp(), vertical = 1f.gridUnitsAsDp()),
+                                    .padding(horizontal = 22f.designPxToDp(), vertical = 16f.designPxToDp()),
                             ) {
-                                DesignText(text = food.productName.orEmpty(), fontSizeDesignPx = 22f)
+                                DesignText(text = toTitleCase(food.productName.orEmpty()), fontSizeDesignPx = 22f)
                                 if (!food.brands.isNullOrBlank()) {
-                                    DesignText(text = food.brands, fontSizeDesignPx = 16f)
+                                    DesignText(
+                                        text = toTitleCase(food.brands),
+                                        fontSizeDesignPx = 16f,
+                                        modifier = Modifier.padding(top = 3f.designPxToDp()),
+                                    )
                                 }
                             }
                         }
+                        Spacer(modifier = Modifier.height(40f.designPxToDp()))
                     }
                 }
             }
@@ -118,7 +127,7 @@ class SearchResultsScreen(sealedActivity: SealedLightActivity, private val query
 
 @Composable
 private fun StateMessage(text: String) {
-    Column(modifier = Modifier.padding(horizontal = 1.5f.gridUnitsAsDp(), vertical = 1.5f.gridUnitsAsDp())) {
+    Column(modifier = Modifier.padding(start = 22f.designPxToDp(), top = 32f.designPxToDp())) {
         DesignText(text = text, fontSizeDesignPx = 22f)
     }
 }

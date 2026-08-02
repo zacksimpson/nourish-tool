@@ -1,6 +1,7 @@
 package com.zacksimpson.nourish.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,8 +25,10 @@ import com.zacksimpson.nourish.data.FoodDetail
 import com.zacksimpson.nourish.data.OffApi
 import com.zacksimpson.nourish.data.formatRound1
 import com.zacksimpson.nourish.data.resolveServing
+import com.zacksimpson.nourish.data.toTitleCase
 import com.zacksimpson.nourish.ui.DesignText
 import com.zacksimpson.nourish.ui.NourishTheme
+import com.zacksimpson.nourish.ui.designPxToDp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -93,22 +96,27 @@ class FoodDetailScreen(
                         val serving = resolveServing(s.detail)
                         LightScrollView(modifier = Modifier.weight(1f).fillMaxWidth()) {
                             Column(
-                                modifier = Modifier.padding(horizontal = 1.1f.gridUnitsAsDp()),
+                                modifier = Modifier.padding(
+                                    start = 22f.designPxToDp(),
+                                    end = 22f.designPxToDp(),
+                                    bottom = 40f.designPxToDp(),
+                                ),
+                                verticalArrangement = Arrangement.spacedBy(16f.designPxToDp()),
                             ) {
-                                DesignText(text = name, fontSizeDesignPx = 28f)
-                                if (category.isNotBlank()) {
-                                    DesignText(text = category, fontSizeDesignPx = 18f)
+                                Column(verticalArrangement = Arrangement.spacedBy(2f.designPxToDp())) {
+                                    DesignText(text = toTitleCase(name), fontSizeDesignPx = 28f)
+                                    if (category.isNotBlank()) {
+                                        DesignText(text = toTitleCase(category), fontSizeDesignPx = 18f)
+                                    }
                                 }
                                 DesignText(
                                     text = "$servingCount ${if (servingCount == 1) "serving" else "servings"} · ${serving.label} each",
                                     fontSizeDesignPx = 22f,
-                                    modifier = Modifier.padding(top = 0.4f.gridUnitsAsDp(), bottom = 0.4f.gridUnitsAsDp()),
                                 )
                                 nutrientLines(s.detail).forEach { (label, amount, unit, mult) ->
                                     DesignText(
                                         text = "$label – ${formatRound1(amount * serving.scale * servingCount * mult)} $unit",
                                         fontSizeDesignPx = 22f,
-                                        modifier = Modifier.padding(bottom = 0.4f.gridUnitsAsDp()),
                                     )
                                 }
                             }
@@ -153,7 +161,7 @@ private data class NutrientLine(val label: String, val amount: Double, val unit:
 
 @Composable
 private fun StateMessage(text: String) {
-    Column(modifier = Modifier.padding(horizontal = 1.1f.gridUnitsAsDp(), vertical = 1.5f.gridUnitsAsDp())) {
+    Column(modifier = Modifier.padding(start = 22f.designPxToDp(), top = 32f.designPxToDp())) {
         DesignText(text = text, fontSizeDesignPx = 22f)
     }
 }
