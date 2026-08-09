@@ -14,8 +14,8 @@ import com.thelightphone.sdk.ui.LightTextVariant
 import com.thelightphone.sdk.ui.gridUnitsAsDp
 import com.thelightphone.sdk.ui.lightClickable
 
-/** Settings-row toggle: the SDK's own TOGGLE_ON/TOGGLE_OFF glyphs on the left, label
- *  (plus an optional description subtitle) on the right. */
+/** Settings-row toggle: the SDK's own TOGGLE_STATE_ON/TOGGLE_STATE_OFF glyphs on the left,
+ *  label (plus an optional description subtitle) on the right. */
 @Composable
 fun ToggleSwitch(
     label: String,
@@ -31,8 +31,7 @@ fun ToggleSwitch(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         LightIcon(
-            // Swapped on purpose: the SDK's own ON/OFF glyphs render backwards.
-            icon = if (value) LightIcons.TOGGLE_OFF else LightIcons.TOGGLE_ON,
+            icon = if (value) LightIcons.TOGGLE_STATE_ON else LightIcons.TOGGLE_STATE_OFF,
             size = 1.8f,
             modifier = Modifier.padding(end = 1f.gridUnitsAsDp()),
         )
