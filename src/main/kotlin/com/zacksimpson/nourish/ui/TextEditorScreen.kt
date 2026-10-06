@@ -33,6 +33,7 @@ class TextEditorScreen(
                 onSubmit = { goBack(it.toString()) },
                 onBack = { goBack(null) },
                 submitLabel = "DONE",
+                initialCaps = request.initialValue.isEmpty(),
                 editorKey = this@TextEditorScreen,
                 modifier = Modifier.background(LightThemeTokens.colors.background),
             )
