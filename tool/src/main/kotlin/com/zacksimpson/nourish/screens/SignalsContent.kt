@@ -24,7 +24,7 @@ import com.zacksimpson.nourish.data.SIGNAL_OPTIONS
 
 private const val MAX_SIGNALS = 3
 
-/** Enable up to three nutrition signals. Numeric targets per signal are a later phase. */
+/** pick up to three nutrition signals. */
 @Composable
 fun SignalsContent(
     signals: List<String>,

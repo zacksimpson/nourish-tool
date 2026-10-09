@@ -20,7 +20,7 @@ private const val VERTICAL_PADDING = 0.8f
 private const val LABEL_GAP = 0.4f
 private const val VALUE_TO_UNDERLINE_GAP = 0.25f
 
-/** Label-over-underlined-value field row; tap opens the full-screen editor for it. */
+/** label above an underlined value. tap opens the editor. */
 @Composable
 fun UnderlinedField(
     value: String,

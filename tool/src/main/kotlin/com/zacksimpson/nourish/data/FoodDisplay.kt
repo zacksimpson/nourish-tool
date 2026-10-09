@@ -4,7 +4,7 @@ import kotlin.math.round
 
 fun roundTo1(v: Double): Double = round(v * 10) / 10.0
 
-/** Matches JS's `String(number)` for a rounded value — "1" not "1.0", "1.5" as-is. */
+/** whole numbers without a decimal, so "1" not "1.0". */
 fun formatRound1(v: Double): String {
     val rounded = roundTo1(v)
     val whole = rounded.toLong()
@@ -19,9 +19,7 @@ fun cleanServingLabel(raw: String): String {
     return DECIMAL_NUMBER.replace(commaFixed) { m -> formatRound1(m.value.toDouble()) }
 }
 
-// OFF (like USDA before it) returns names/brands in inconsistent casing —
-// some fully caps, some mixed. Title-case normalizes it; the apostrophe
-// lookbehind keeps "don't" from becoming "Don'T".
+// food names come in mixed casing, so title case them. the lookbehind keeps "don't" from becoming "Don'T"
 private val TITLE_CASE_WORD_START = Regex("(?<!')\\b\\w")
 
 fun toTitleCase(str: String): String =

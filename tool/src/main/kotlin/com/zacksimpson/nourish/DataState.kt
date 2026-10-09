@@ -9,15 +9,14 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-/** UI state for the app's data: loading, ready, or unreadable (corruption). */
+/** loading, ready, or unreadable data. */
 sealed interface DataState {
     data object Loading : DataState
     data class Ready(val data: AppData) : DataState
     data class Corrupt(val message: String) : DataState
 }
 
-/** Collect the repository's live data as a [DataState], turning a corruption error into
- *  [DataState.Corrupt] rather than crashing the collector. */
+/** exposes the repository as a [DataState], mapping a corruption error to [DataState.Corrupt]. */
 fun NourishRepository.dataStateIn(scope: CoroutineScope): StateFlow<DataState> =
     appData
         .map<AppData, DataState> { DataState.Ready(it) }

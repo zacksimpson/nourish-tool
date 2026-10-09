@@ -14,7 +14,7 @@ import com.thelightphone.sdk.ui.LightTextVariant
 import com.thelightphone.sdk.ui.LightThemeTokens
 import kotlinx.coroutines.delay
 
-/** Full-screen, self-dismissing confirmation message. Pushed as a screen, pops itself. */
+/** full screen message that closes itself. */
 class ToastScreen(
     sealedActivity: SealedLightActivity,
     private val message: String,

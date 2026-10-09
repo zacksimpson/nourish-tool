@@ -12,10 +12,7 @@ import com.thelightphone.sdk.ui.LightThemeTokens
 
 data class TextEditorRequest(val title: String, val initialValue: String = "")
 
-/**
- * Full-screen text entry backed by the LightOS keyboard. Returns the entered text as
- * the screen result on submit, or nothing if the user backs out.
- */
+/** full screen text entry. returns the text on submit, nothing on back. */
 class TextEditorScreen(
     sealedActivity: SealedLightActivity,
     private val request: TextEditorRequest,

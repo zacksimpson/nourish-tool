@@ -8,6 +8,6 @@ fun todayDateString(): String = LocalDate.now().toString()
 
 private val SHORT_DATE_FORMATTER = DateTimeFormatter.ofPattern("EEE MMM d", Locale.US)
 
-/** "Wed Jul 31" from a "YYYY-MM-DD" string. */
+/** "Wed Jul 31" from a yyyy-mm-dd string. */
 fun formatDateShort(dateStr: String): String =
     LocalDate.parse(dateStr).format(SHORT_DATE_FORMATTER)

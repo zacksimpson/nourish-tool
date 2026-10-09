@@ -38,7 +38,7 @@ private val MONTH_NAMES = listOf(
 )
 private val DAY_HEADERS = listOf("S", "M", "T", "W", "T", "F", "S")
 
-/** Month calendar: chevron nav, day-of-week header, today underlined, logged days dotted. */
+/** month calendar. today is underlined and logged days have a dot. */
 @Composable
 fun HistoryTab(
     year: Int,
@@ -54,7 +54,6 @@ fun HistoryTab(
             .fillMaxSize()
             .padding(horizontal = 1f.gridUnitsAsDp()),
     ) {
-        // Chevron size/inset match LightTopBar's back button exactly.
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -78,8 +77,6 @@ fun HistoryTab(
             )
         }
 
-        // Day-of-week headers — same size as the day-of-month digits, bolded to read
-        // as a header rather than another row of dates.
         Row(modifier = Modifier.fillMaxWidth()) {
             DAY_HEADERS.forEach { d ->
                 Box(
@@ -101,9 +98,7 @@ fun HistoryTab(
 
         Column {
             rows.forEach { row ->
-                // height(IntrinsicSize.Min) + fillMaxHeight keeps blank cells the same
-                // height as day cells — Compose doesn't stretch row children to the
-                // tallest sibling by default.
+                // intrinsic height keeps empty cells as tall as day cells
                 Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
                     row.forEach { day ->
                         val dateStr = day?.let { "%04d-%02d-%02d".format(year, month, it) }
@@ -120,10 +115,7 @@ fun HistoryTab(
                                 val isLogged = isDateLogged(dateStr)
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                     LightText(text = day.toString(), variant = LightTextVariant.Subheading)
-                                    // Fixed-size marker slot, present on every cell regardless of state
-                                    // (only its content changes) — matches the calendar this was ported
-                                    // from, which always reserves the same box rather than conditionally
-                                    // adding/removing it.
+                                    // marker slot is always reserved so rows keep the same height
                                     Box(
                                         modifier = Modifier
                                             .padding(top = 0.12f.gridUnitsAsDp())

@@ -88,7 +88,7 @@ class MainViewModel(
         }
     }
 
-    /** Seeds today's fields from a previously saved entry, once, the first time it loads. */
+    /** fills today's fields from a saved entry, once. */
     fun loadTodayEntryIfNeeded(entry: Entry?) {
         if (loadedFromEntry || entry == null) return
         loadedFromEntry = true
@@ -141,7 +141,7 @@ class MainViewModel(
     }
 }
 
-/** Boot screen: the two-tab host — Log and History — plus settings/search actions. */
+/** home screen with log and history tabs. */
 @InitialScreen
 class MainScreen(sealedActivity: SealedLightActivity) :
     LightScreen<Unit, MainViewModel>(sealedActivity) {

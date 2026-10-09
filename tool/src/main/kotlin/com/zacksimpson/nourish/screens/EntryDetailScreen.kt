@@ -143,7 +143,7 @@ class EntryDetailViewModel(
     }
 }
 
-/** View or edit a single day's entry; swipe left/right to move between days. */
+/** view or edit one day's entry. swipe to change days. */
 class EntryDetailScreen(
     sealedActivity: SealedLightActivity,
     private val initialDate: String,
@@ -190,8 +190,7 @@ class EntryDetailScreen(
                         onClick = { if (isEditing) viewModel.cancelEdit() else goBack(Unit) },
                     ),
                     center = LightTopBarCenter.Text(formatDateShort(currentDate)),
-                    // ACCEPT and PENCIL's artwork fills its box edge-to-edge, unlike BACK's —
-                    // sized down to match BACK's visual weight elsewhere in the app.
+                    // accept and pencil icons are drawn edge to edge, so shrink them to match back
                     rightButton = if (isEditing) {
                         LightBarButton.LightIcon(
                             LightIcons.ACCEPT,
@@ -314,10 +313,10 @@ private fun EmptyEntryState() {
 @Composable
 private fun EntryReadOnlyView(entry: Entry) {
     Column(modifier = Modifier.fillMaxWidth().padding(top = 0.75f.gridUnitsAsDp())) {
-        ReadOnlyField("breakfast", entry.breakfast.ifBlank { "—" })
-        ReadOnlyField("lunch", entry.lunch.ifBlank { "—" })
-        ReadOnlyField("dinner", entry.dinner.ifBlank { "—" })
-        ReadOnlyField("snacks", entry.snacks.ifBlank { "—" })
+        ReadOnlyField("breakfast", entry.breakfast.ifBlank { "none" })
+        ReadOnlyField("lunch", entry.lunch.ifBlank { "none" })
+        ReadOnlyField("dinner", entry.dinner.ifBlank { "none" })
+        ReadOnlyField("snacks", entry.snacks.ifBlank { "none" })
 
         SIGNAL_OPTIONS.filter { entry.signals.containsKey(it.id) }.forEach { signal ->
             ReadOnlyField(signal.label, ratingLabel(entry.signals.getValue(signal.id)))
