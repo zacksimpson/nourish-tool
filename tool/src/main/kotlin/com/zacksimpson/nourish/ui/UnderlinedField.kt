@@ -8,16 +8,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.thelightphone.sdk.ui.LightText
+import com.thelightphone.sdk.ui.LightTextVariant
 import com.thelightphone.sdk.ui.LightThemeTokens
+import com.thelightphone.sdk.ui.gridUnitsAsDp
 import com.thelightphone.sdk.ui.lightClickable
 
-private const val LABEL_SIZE_PX = 16f
-private const val VALUE_SIZE_PX = 23f
-private const val UNDERLINE_THICKNESS_PX = 3f
-private const val HORIZONTAL_PADDING_PX = 28f
-private const val VERTICAL_PADDING_PX = 13f
-private const val LABEL_GAP_PX = 6f
-private const val VALUE_TO_UNDERLINE_GAP_PX = 4f
+private const val UNDERLINE_THICKNESS = 0.2f
+private const val HORIZONTAL_PADDING = 1.75f
+private const val VERTICAL_PADDING = 0.8f
+private const val LABEL_GAP = 0.4f
+private const val VALUE_TO_UNDERLINE_GAP = 0.25f
 
 /** Label-over-underlined-value field row; tap opens the full-screen editor for it. */
 @Composable
@@ -32,21 +33,21 @@ fun UnderlinedField(
         modifier = modifier
             .fillMaxWidth()
             .lightClickable(onClick = onClick)
-            .padding(horizontal = HORIZONTAL_PADDING_PX.designPxToDp(), vertical = VERTICAL_PADDING_PX.designPxToDp()),
+            .padding(horizontal = HORIZONTAL_PADDING.gridUnitsAsDp(), vertical = VERTICAL_PADDING.gridUnitsAsDp()),
     ) {
         if (label != null) {
-            DesignText(text = label, fontSizeDesignPx = LABEL_SIZE_PX)
-            Spacer(modifier = Modifier.height(LABEL_GAP_PX.designPxToDp()))
+            LightText(text = label, variant = LightTextVariant.Detail)
+            Spacer(modifier = Modifier.height(LABEL_GAP.gridUnitsAsDp()))
         }
-        DesignText(
+        LightText(
             text = value.ifBlank { placeholder },
-            fontSizeDesignPx = VALUE_SIZE_PX,
+            variant = LightTextVariant.Paragraph,
         )
-        Spacer(modifier = Modifier.height(VALUE_TO_UNDERLINE_GAP_PX.designPxToDp()))
+        Spacer(modifier = Modifier.height(VALUE_TO_UNDERLINE_GAP.gridUnitsAsDp()))
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(UNDERLINE_THICKNESS_PX.designPxToDp())
+                .height(UNDERLINE_THICKNESS.gridUnitsAsDp())
                 .background(LightThemeTokens.colors.content),
         )
     }

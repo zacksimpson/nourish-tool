@@ -18,21 +18,20 @@ import com.thelightphone.sdk.SimpleLightScreen
 import com.thelightphone.sdk.ui.LightBarButton
 import com.thelightphone.sdk.ui.LightIcons
 import com.thelightphone.sdk.ui.LightScrollView
+import com.thelightphone.sdk.ui.LightText
+import com.thelightphone.sdk.ui.LightTextVariant
 import com.thelightphone.sdk.ui.LightThemeTokens
 import com.thelightphone.sdk.ui.LightTopBar
 import com.thelightphone.sdk.ui.LightTopBarCenter
 import com.thelightphone.sdk.ui.gridUnitsAsDp
 import com.thelightphone.sdk.ui.lightClickable
 import com.zacksimpson.nourish.data.ALL_TAGS
-import com.zacksimpson.nourish.ui.DesignText
 import com.zacksimpson.nourish.ui.NourishTheme
-import com.zacksimpson.nourish.ui.designPxToDp
 
-private const val TAG_SIZE_PX = 22f
-private const val LIST_HORIZONTAL_PADDING_PX = 22f
-private const val LIST_TOP_PADDING_PX = 4f
-private const val TAG_ROW_VERTICAL_PADDING_PX = 10f
-private const val BOTTOM_PAD_PX = 40f
+private const val LIST_HORIZONTAL_PADDING = 1.4f
+private const val LIST_TOP_PADDING = 0.25f
+private const val TAG_ROW_VERTICAL_PADDING = 0.65f
+private const val BOTTOM_PAD = 2.5f
 
 /** Multi-select context tags. Tap the back button to return the current selection. */
 class ContextPickerScreen(
@@ -58,11 +57,11 @@ class ContextPickerScreen(
                 LightScrollView(
                     modifier = Modifier.fillMaxSize(),
                 ) {
-                    Spacer(modifier = Modifier.height(LIST_TOP_PADDING_PX.designPxToDp()))
+                    Spacer(modifier = Modifier.height(LIST_TOP_PADDING.gridUnitsAsDp()))
                     ALL_TAGS.forEach { tag ->
-                        DesignText(
+                        LightText(
                             text = tag.label,
-                            fontSizeDesignPx = TAG_SIZE_PX,
+                            variant = LightTextVariant.Paragraph,
                             underline = tag.id in selected,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -70,12 +69,12 @@ class ContextPickerScreen(
                                     selected = if (tag.id in selected) selected - tag.id else selected + tag.id
                                 })
                                 .padding(
-                                    horizontal = LIST_HORIZONTAL_PADDING_PX.designPxToDp(),
-                                    vertical = TAG_ROW_VERTICAL_PADDING_PX.designPxToDp(),
+                                    horizontal = LIST_HORIZONTAL_PADDING.gridUnitsAsDp(),
+                                    vertical = TAG_ROW_VERTICAL_PADDING.gridUnitsAsDp(),
                                 ),
                         )
                     }
-                    Spacer(modifier = Modifier.height(BOTTOM_PAD_PX.designPxToDp()))
+                    Spacer(modifier = Modifier.height(BOTTOM_PAD.gridUnitsAsDp()))
                 }
             }
         }

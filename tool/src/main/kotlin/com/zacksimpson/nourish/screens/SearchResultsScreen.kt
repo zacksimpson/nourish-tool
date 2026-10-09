@@ -18,6 +18,8 @@ import com.thelightphone.sdk.SealedLightActivity
 import com.thelightphone.sdk.ui.LightBarButton
 import com.thelightphone.sdk.ui.LightIcons
 import com.thelightphone.sdk.ui.LightScrollView
+import com.thelightphone.sdk.ui.LightText
+import com.thelightphone.sdk.ui.LightTextVariant
 import com.thelightphone.sdk.ui.LightThemeTokens
 import com.thelightphone.sdk.ui.LightTopBar
 import com.thelightphone.sdk.ui.LightTopBarCenter
@@ -26,9 +28,7 @@ import com.thelightphone.sdk.ui.lightClickable
 import com.zacksimpson.nourish.data.FoodResult
 import com.zacksimpson.nourish.data.OffApi
 import com.zacksimpson.nourish.data.toTitleCase
-import com.zacksimpson.nourish.ui.DesignText
 import com.zacksimpson.nourish.ui.NourishTheme
-import com.zacksimpson.nourish.ui.designPxToDp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -105,19 +105,19 @@ class SearchResultsScreen(sealedActivity: SealedLightActivity, private val query
                                             )
                                         },
                                     )
-                                    .padding(horizontal = 22f.designPxToDp(), vertical = 16f.designPxToDp()),
+                                    .padding(horizontal = 1.4f.gridUnitsAsDp(), vertical = 1f.gridUnitsAsDp()),
                             ) {
-                                DesignText(text = toTitleCase(food.productName.orEmpty()), fontSizeDesignPx = 22f)
+                                LightText(text = toTitleCase(food.productName.orEmpty()), variant = LightTextVariant.Paragraph)
                                 if (!food.brands.isNullOrBlank()) {
-                                    DesignText(
+                                    LightText(
                                         text = toTitleCase(food.brands),
-                                        fontSizeDesignPx = 16f,
-                                        modifier = Modifier.padding(top = 3f.designPxToDp()),
+                                        variant = LightTextVariant.Detail,
+                                        modifier = Modifier.padding(top = 0.2f.gridUnitsAsDp()),
                                     )
                                 }
                             }
                         }
-                        Spacer(modifier = Modifier.height(40f.designPxToDp()))
+                        Spacer(modifier = Modifier.height(2.5f.gridUnitsAsDp()))
                     }
                 }
             }
@@ -127,7 +127,7 @@ class SearchResultsScreen(sealedActivity: SealedLightActivity, private val query
 
 @Composable
 private fun StateMessage(text: String) {
-    Column(modifier = Modifier.padding(start = 22f.designPxToDp(), top = 32f.designPxToDp())) {
-        DesignText(text = text, fontSizeDesignPx = 22f)
+    Column(modifier = Modifier.padding(start = 1.4f.gridUnitsAsDp(), top = 2f.gridUnitsAsDp())) {
+        LightText(text = text, variant = LightTextVariant.Paragraph)
     }
 }

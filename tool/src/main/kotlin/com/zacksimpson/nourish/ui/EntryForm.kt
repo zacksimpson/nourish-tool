@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.thelightphone.sdk.ui.LightText
+import com.thelightphone.sdk.ui.LightTextVariant
+import com.thelightphone.sdk.ui.gridUnitsAsDp
 import com.thelightphone.sdk.ui.lightClickable
 import com.zacksimpson.nourish.data.SIGNAL_OPTIONS
 import com.zacksimpson.nourish.data.SignalRating
@@ -22,14 +25,12 @@ fun ratingLabel(rating: SignalRating): String = when (rating) {
     SignalRating.OFF_TRACK -> "off track"
 }
 
-private const val FORM_TOP_PADDING_PX = 12f
-private const val BOTTOM_PAD_PX = 40f
-private const val SIGNAL_LABEL_SIZE_PX = 16f
-private const val SIGNAL_LABEL_GAP_PX = 10f
-private const val SIGNAL_OPTION_SIZE_PX = 22f
-private const val SIGNAL_OPTION_GAP_PX = 24f
-private const val FIELD_HORIZONTAL_PADDING_PX = 28f
-private const val FIELD_VERTICAL_PADDING_PX = 13f
+private const val FORM_TOP_PADDING = 0.75f
+private const val BOTTOM_PAD = 2.5f
+private const val SIGNAL_LABEL_GAP = 0.65f
+private const val SIGNAL_OPTION_GAP = 1.5f
+private const val FIELD_HORIZONTAL_PADDING = 1.75f
+private const val FIELD_VERTICAL_PADDING = 0.8f
 
 /** Shared meal-entry form — used by both the Log tab and entry detail's edit mode. */
 @Composable
@@ -51,7 +52,7 @@ fun EntryForm(
     onEditContext: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.fillMaxWidth().padding(top = FORM_TOP_PADDING_PX.designPxToDp())) {
+    Column(modifier = modifier.fillMaxWidth().padding(top = FORM_TOP_PADDING.gridUnitsAsDp())) {
         UnderlinedField(label = "breakfast:", value = breakfast, placeholder = "Add breakfast", onClick = onEditBreakfast)
         UnderlinedField(label = "lunch:", value = lunch, placeholder = "Add lunch", onClick = onEditLunch)
         UnderlinedField(label = "dinner:", value = dinner, placeholder = "Add dinner", onClick = onEditDinner)
@@ -75,7 +76,7 @@ fun EntryForm(
 
         UnderlinedField(label = "notes:", value = note, placeholder = "Add notes", onClick = onEditNote)
 
-        Spacer(modifier = Modifier.height(BOTTOM_PAD_PX.designPxToDp()))
+        Spacer(modifier = Modifier.height(BOTTOM_PAD.gridUnitsAsDp()))
     }
 }
 
@@ -85,17 +86,17 @@ private fun SignalRow(label: String, current: SignalRating?, onSelect: (SignalRa
         modifier = Modifier
             .fillMaxWidth()
             .padding(
-                horizontal = FIELD_HORIZONTAL_PADDING_PX.designPxToDp(),
-                vertical = FIELD_VERTICAL_PADDING_PX.designPxToDp(),
+                horizontal = FIELD_HORIZONTAL_PADDING.gridUnitsAsDp(),
+                vertical = FIELD_VERTICAL_PADDING.gridUnitsAsDp(),
             ),
     ) {
-        DesignText(text = "$label:", fontSizeDesignPx = SIGNAL_LABEL_SIZE_PX)
-        Spacer(modifier = Modifier.height(SIGNAL_LABEL_GAP_PX.designPxToDp()))
-        Row(horizontalArrangement = Arrangement.spacedBy(SIGNAL_OPTION_GAP_PX.designPxToDp())) {
+        LightText(text = "$label:", variant = LightTextVariant.Detail)
+        Spacer(modifier = Modifier.height(SIGNAL_LABEL_GAP.gridUnitsAsDp()))
+        Row(horizontalArrangement = Arrangement.spacedBy(SIGNAL_OPTION_GAP.gridUnitsAsDp())) {
             RATING_ORDER.forEach { rating ->
-                DesignText(
+                LightText(
                     text = ratingLabel(rating),
-                    fontSizeDesignPx = SIGNAL_OPTION_SIZE_PX,
+                    variant = LightTextVariant.Paragraph,
                     underline = current == rating,
                     modifier = Modifier.lightClickable(onClick = { onSelect(rating) }),
                 )

@@ -16,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.thelightphone.sdk.SealedLightActivity
 import com.thelightphone.sdk.SimpleLightScreen
@@ -24,11 +23,12 @@ import com.thelightphone.sdk.ui.LightBarButton
 import com.thelightphone.sdk.ui.LightBottomBar
 import com.thelightphone.sdk.ui.LightIcon
 import com.thelightphone.sdk.ui.LightIcons
+import com.thelightphone.sdk.ui.LightText
+import com.thelightphone.sdk.ui.LightTextVariant
 import com.thelightphone.sdk.ui.LightThemeTokens
+import com.thelightphone.sdk.ui.gridUnitsAsDp
 import com.thelightphone.sdk.ui.lightClickable
-import com.zacksimpson.nourish.ui.DesignText
 import com.zacksimpson.nourish.ui.NourishTheme
-import com.zacksimpson.nourish.ui.designPxToDp
 
 /** How many servings of the looked-up food were eaten. Back returns no change. */
 class ServingCounterScreen(
@@ -46,19 +46,19 @@ class ServingCounterScreen(
                     .fillMaxSize()
                     .background(LightThemeTokens.colors.background),
             ) {
-                DesignText(
+                LightText(
                     text = "Servings",
-                    fontSizeDesignPx = 26f,
+                    variant = LightTextVariant.Subheading,
                     align = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 60f.designPxToDp(), bottom = 20f.designPxToDp()),
+                        .padding(top = 3.75f.gridUnitsAsDp(), bottom = 1.25f.gridUnitsAsDp()),
                 )
 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 10f.designPxToDp()),
+                        .padding(vertical = 0.65f.gridUnitsAsDp()),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -67,21 +67,20 @@ class ServingCounterScreen(
                         size = 2f,
                         modifier = Modifier
                             .lightClickable(onClick = { count = maxOf(1, count - 1) })
-                            .padding(horizontal = 32f.designPxToDp(), vertical = 16f.designPxToDp()),
+                            .padding(horizontal = 2f.gridUnitsAsDp(), vertical = 1f.gridUnitsAsDp()),
                     )
-                    DesignText(
+                    LightText(
                         text = count.toString(),
-                        fontSizeDesignPx = 100f,
-                        fontWeight = FontWeight.Light,
+                        variant = LightTextVariant.Title,
                         align = TextAlign.Center,
-                        modifier = Modifier.width(120f.designPxToDp()),
+                        modifier = Modifier.width(7.5f.gridUnitsAsDp()),
                     )
                     LightIcon(
                         icon = LightIcons.UP,
                         size = 2f,
                         modifier = Modifier
                             .lightClickable(onClick = { count += 1 })
-                            .padding(horizontal = 32f.designPxToDp(), vertical = 16f.designPxToDp()),
+                            .padding(horizontal = 2f.gridUnitsAsDp(), vertical = 1f.gridUnitsAsDp()),
                     )
                 }
 

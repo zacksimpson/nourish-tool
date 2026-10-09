@@ -16,6 +16,8 @@ import com.thelightphone.sdk.SealedLightActivity
 import com.thelightphone.sdk.ui.LightBarButton
 import com.thelightphone.sdk.ui.LightIcons
 import com.thelightphone.sdk.ui.LightScrollView
+import com.thelightphone.sdk.ui.LightText
+import com.thelightphone.sdk.ui.LightTextVariant
 import com.thelightphone.sdk.ui.LightThemeTokens
 import com.thelightphone.sdk.ui.LightTopBar
 import com.thelightphone.sdk.ui.LightTopBarCenter
@@ -24,17 +26,13 @@ import com.thelightphone.sdk.ui.lightClickable
 import com.zacksimpson.nourish.DataState
 import com.zacksimpson.nourish.data.AppDataStore
 import com.zacksimpson.nourish.data.NourishRepository
-import com.zacksimpson.nourish.ui.DesignText
 import com.zacksimpson.nourish.ui.NourishTheme
-import com.zacksimpson.nourish.ui.designPxToDp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-private const val ROW_LABEL_SIZE_PX = 30f
-private const val ROW_DESCRIPTION_SIZE_PX = 16f
-private const val ROW_HORIZONTAL_PADDING_PX = 22f
-private const val ROW_VERTICAL_PADDING_PX = 16f
+private const val ROW_HORIZONTAL_PADDING = 1.4f
+private const val ROW_VERTICAL_PADDING = 1f
 private const val MAX_SIGNALS = 3
 
 /** Settings pages share one screen and switch modes, so moving between them doesn't reload data. */
@@ -134,13 +132,13 @@ private fun SettingsRow(label: String, onClick: () -> Unit, description: String?
             .fillMaxWidth()
             .lightClickable(onClick = onClick)
             .padding(
-                horizontal = ROW_HORIZONTAL_PADDING_PX.designPxToDp(),
-                vertical = ROW_VERTICAL_PADDING_PX.designPxToDp(),
+                horizontal = ROW_HORIZONTAL_PADDING.gridUnitsAsDp(),
+                vertical = ROW_VERTICAL_PADDING.gridUnitsAsDp(),
             ),
     ) {
-        DesignText(text = label, fontSizeDesignPx = ROW_LABEL_SIZE_PX)
+        LightText(text = label, variant = LightTextVariant.Subheading)
         if (description != null) {
-            DesignText(text = description, fontSizeDesignPx = ROW_DESCRIPTION_SIZE_PX)
+            LightText(text = description, variant = LightTextVariant.Detail)
         }
     }
 }

@@ -22,6 +22,8 @@ import com.thelightphone.sdk.SealedLightActivity
 import com.thelightphone.sdk.ui.LightBarButton
 import com.thelightphone.sdk.ui.LightIcons
 import com.thelightphone.sdk.ui.LightScrollView
+import com.thelightphone.sdk.ui.LightText
+import com.thelightphone.sdk.ui.LightTextVariant
 import com.thelightphone.sdk.ui.LightThemeTokens
 import com.thelightphone.sdk.ui.LightTopBar
 import com.thelightphone.sdk.ui.LightTopBarCenter
@@ -36,13 +38,11 @@ import com.zacksimpson.nourish.data.SignalRating
 import com.zacksimpson.nourish.data.formatDateShort
 import com.zacksimpson.nourish.data.getTagLabel
 import com.zacksimpson.nourish.data.todayDateString
-import com.zacksimpson.nourish.ui.DesignText
 import com.zacksimpson.nourish.ui.EntryForm
 import com.zacksimpson.nourish.ui.NourishTheme
 import com.zacksimpson.nourish.ui.TextEditorRequest
 import com.zacksimpson.nourish.ui.TextEditorScreen
 import com.zacksimpson.nourish.ui.ToastScreen
-import com.zacksimpson.nourish.ui.designPxToDp
 import com.zacksimpson.nourish.ui.ratingLabel
 import java.time.LocalDate
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -305,15 +305,15 @@ class EntryDetailScreen(
 @Composable
 private fun EmptyEntryState() {
     Column(
-        modifier = Modifier.padding(start = 28f.designPxToDp(), top = 32f.designPxToDp()),
+        modifier = Modifier.padding(start = 1.75f.gridUnitsAsDp(), top = 2f.gridUnitsAsDp()),
     ) {
-        DesignText(text = "no entry logged", fontSizeDesignPx = 22f)
+        LightText(text = "no entry logged", variant = LightTextVariant.Paragraph)
     }
 }
 
 @Composable
 private fun EntryReadOnlyView(entry: Entry) {
-    Column(modifier = Modifier.fillMaxWidth().padding(top = 12f.designPxToDp())) {
+    Column(modifier = Modifier.fillMaxWidth().padding(top = 0.75f.gridUnitsAsDp())) {
         ReadOnlyField("breakfast", entry.breakfast.ifBlank { "—" })
         ReadOnlyField("lunch", entry.lunch.ifBlank { "—" })
         ReadOnlyField("dinner", entry.dinner.ifBlank { "—" })
@@ -331,7 +331,7 @@ private fun EntryReadOnlyView(entry: Entry) {
             ReadOnlyField("notes", entry.note)
         }
 
-        Spacer(modifier = Modifier.height(40f.designPxToDp()))
+        Spacer(modifier = Modifier.height(2.5f.gridUnitsAsDp()))
     }
 }
 
@@ -340,10 +340,10 @@ private fun ReadOnlyField(label: String, value: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 28f.designPxToDp(), vertical = 13f.designPxToDp()),
+            .padding(horizontal = 1.75f.gridUnitsAsDp(), vertical = 0.8f.gridUnitsAsDp()),
     ) {
-        DesignText(text = label, fontSizeDesignPx = 16f)
-        Spacer(modifier = Modifier.height(6f.designPxToDp()))
-        DesignText(text = value, fontSizeDesignPx = 22f)
+        LightText(text = label, variant = LightTextVariant.Detail)
+        Spacer(modifier = Modifier.height(0.4f.gridUnitsAsDp()))
+        LightText(text = value, variant = LightTextVariant.Paragraph)
     }
 }
