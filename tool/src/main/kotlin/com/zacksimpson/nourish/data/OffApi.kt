@@ -18,22 +18,26 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 private const val BASE = "https://us.openfoodfacts.org"
-private const val SEARCH_FIELDS = "code,product_name,brands,serving_size,serving_quantity"
+private const val SEARCH_BASE = "https://search.openfoodfacts.org/search"
+private const val SEARCH_FIELDS = "code,product_name,brands"
 private const val DETAIL_FIELDS = "product_name,brands,nutriments,serving_size,serving_quantity"
 
-// OFF requires a descriptive User-Agent to avoid rate-limiting.
-private const val USER_AGENT = "Nourish/1.0 (Android; github.com/zacksimpson/nourish-tool)"
+// open food facts asks for AppName/Version (contact email)
+private const val USER_AGENT = "Nourish/2.0.0 (zacksimpson24@gmail.com)"
 private val RETRY_DELAYS_MS = listOf(500L, 1000L, 1500L)
 
 @Serializable
 data class FoodResult(
     val code: String,
     @SerialName("product_name") val productName: String? = null,
-    val brands: String? = null,
-)
+    val brands: List<String>? = null,
+) {
+    val brandLine: String
+        get() = brands.orEmpty().map { it.trim() }.filter { it.isNotEmpty() }.joinToString(", ")
+}
 
 @Serializable
-private data class SearchResponse(val products: List<FoodResult> = emptyList())
+private data class SearchResponse(val hits: List<FoodResult> = emptyList())
 
 @Serializable
 data class Nutriments(
@@ -43,7 +47,7 @@ data class Nutriments(
     @SerialName("fat_100g") val fat100g: Double? = null,
     @SerialName("fiber_100g") val fiber100g: Double? = null,
     @SerialName("sugars-added_100g") val sugarsAdded100g: Double? = null,
-    // OFF stores sodium and caffeine in g/100g; display wants mg.
+    // sodium and caffeine come in g/100g, shown as mg
     @SerialName("sodium_100g") val sodium100g: Double? = null,
     @SerialName("water_100g") val water100g: Double? = null,
     @SerialName("caffeine_100g") val caffeine100g: Double? = null,
@@ -69,12 +73,11 @@ class OffApi {
 
     suspend fun search(query: String): Result<List<FoodResult>> = runCatching {
         val encoded = URLEncoder.encode(query, UTF_8.name())
-        val url = "$BASE/cgi/search.pl?search_terms=$encoded&json=1&page_size=25" +
-            "&fields=$SEARCH_FIELDS&sort_by=unique_scans_n&lc=en"
+        val url = "$SEARCH_BASE?q=$encoded&page_size=25&fields=$SEARCH_FIELDS&langs=en"
         val response = getWithRetry(url)
         if (!response.status.isSuccess()) throw IllegalStateException("search HTTP ${response.status.value}")
         val body: SearchResponse = response.body()
-        dedupeByName(body.products)
+        dedupeByName(body.hits)
     }
 
     suspend fun fetchDetail(id: String): Result<FoodDetail> = runCatching {

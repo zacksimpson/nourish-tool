@@ -84,7 +84,7 @@ class SearchResultsScreen(sealedActivity: SealedLightActivity, private val query
 
                 when (val s = status) {
                     SearchStatus.Loading -> StateMessage("searching...")
-                    SearchStatus.Error -> StateMessage("something went wrong")
+                    SearchStatus.Error -> StateMessage("couldn't reach open food facts. check your connection and try again.")
                     SearchStatus.Empty -> StateMessage("no results")
                     is SearchStatus.Success -> LightScrollView(modifier = Modifier.fillMaxSize()) {
                         s.results.forEach { food ->
@@ -99,7 +99,7 @@ class SearchResultsScreen(sealedActivity: SealedLightActivity, private val query
                                                         it,
                                                         food.code,
                                                         food.productName.orEmpty(),
-                                                        food.brands.orEmpty(),
+                                                        food.brandLine,
                                                     )
                                                 },
                                             )
@@ -108,9 +108,9 @@ class SearchResultsScreen(sealedActivity: SealedLightActivity, private val query
                                     .padding(horizontal = 1.4f.gridUnitsAsDp(), vertical = 1f.gridUnitsAsDp()),
                             ) {
                                 LightText(text = toTitleCase(food.productName.orEmpty()), variant = LightTextVariant.Paragraph)
-                                if (!food.brands.isNullOrBlank()) {
+                                if (food.brandLine.isNotEmpty()) {
                                     LightText(
-                                        text = toTitleCase(food.brands),
+                                        text = toTitleCase(food.brandLine),
                                         variant = LightTextVariant.Detail,
                                         modifier = Modifier.padding(top = 0.2f.gridUnitsAsDp()),
                                     )

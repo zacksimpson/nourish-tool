@@ -1,6 +1,7 @@
 package com.zacksimpson.nourish.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,6 +40,7 @@ private const val MAX_SIGNALS = 3
 sealed interface SettingsMode {
     data object Home : SettingsMode
     data object Signals : SettingsMode
+    data object About : SettingsMode
 }
 
 class SettingsViewModel(
@@ -49,6 +51,10 @@ class SettingsViewModel(
 
     fun openSignals() {
         mode.value = SettingsMode.Signals
+    }
+
+    fun openAbout() {
+        mode.value = SettingsMode.About
     }
 
     fun backToHome() {
@@ -81,7 +87,10 @@ class SettingsScreen(sealedActivity: SealedLightActivity) :
                 SettingsMode.Home -> SettingsHomeContent(
                     onBack = { goBack(Unit) },
                     onOpenSignals = { viewModel.openSignals() },
+                    onOpenAbout = { viewModel.openAbout() },
                 )
+
+                SettingsMode.About -> AboutContent(onBack = { viewModel.backToHome() })
 
                 SettingsMode.Signals -> {
                     val state by viewModel.nourishState.collectAsState()
@@ -103,6 +112,7 @@ class SettingsScreen(sealedActivity: SealedLightActivity) :
 private fun SettingsHomeContent(
     onBack: () -> Unit,
     onOpenSignals: () -> Unit,
+    onOpenAbout: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -121,6 +131,7 @@ private fun SettingsHomeContent(
                 description = "choose up to three",
                 onClick = onOpenSignals,
             )
+            SettingsRow(label = "About", onClick = onOpenAbout)
         }
     }
 }
@@ -139,6 +150,42 @@ private fun SettingsRow(label: String, onClick: () -> Unit, description: String?
         LightText(text = label, variant = LightTextVariant.Subheading)
         if (description != null) {
             LightText(text = description, variant = LightTextVariant.Detail)
+        }
+    }
+}
+
+@Composable
+private fun AboutContent(onBack: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(LightThemeTokens.colors.background),
+    ) {
+        LightTopBar(
+            leftButton = LightBarButton.LightIcon(LightIcons.BACK, onClick = onBack),
+            center = LightTopBarCenter.Text("About"),
+            modifier = Modifier.padding(bottom = 1f.gridUnitsAsDp()),
+        )
+
+        LightScrollView(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier.padding(horizontal = ROW_HORIZONTAL_PADDING.gridUnitsAsDp()),
+                verticalArrangement = Arrangement.spacedBy(ROW_VERTICAL_PADDING.gridUnitsAsDp()),
+            ) {
+                LightText(
+                    text = "your logs stay on this phone. nothing is sent anywhere.",
+                    variant = LightTextVariant.Paragraph,
+                )
+                LightText(
+                    text = "nutrition lookup is the only online feature. the words you search for and the " +
+                        "foods you open are sent to open food facts, along with your ip address.",
+                    variant = LightTextVariant.Paragraph,
+                )
+                LightText(
+                    text = "food data comes from open food facts and is available under the open database license.",
+                    variant = LightTextVariant.Paragraph,
+                )
+            }
         }
     }
 }

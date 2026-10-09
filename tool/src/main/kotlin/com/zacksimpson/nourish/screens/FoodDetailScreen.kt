@@ -91,7 +91,7 @@ class FoodDetailScreen(
 
                 when (val s = status) {
                     DetailStatus.Loading -> StateMessage("loading...")
-                    DetailStatus.Error -> StateMessage("something went wrong")
+                    DetailStatus.Error -> StateMessage("couldn't reach open food facts. check your connection and try again.")
                     is DetailStatus.Success -> {
                         val serving = resolveServing(s.detail)
                         LightScrollView(modifier = Modifier.weight(1f).fillMaxWidth()) {
@@ -115,10 +115,11 @@ class FoodDetailScreen(
                                 )
                                 nutrientLines(s.detail).forEach { (label, amount, unit, mult) ->
                                     LightText(
-                                        text = "$label – ${formatRound1(amount * serving.scale * servingCount * mult)} $unit",
+                                        text = "$label: ${formatRound1(amount * serving.scale * servingCount * mult)} $unit",
                                         variant = LightTextVariant.Paragraph,
                                     )
                                 }
+                                LightText(text = "data from open food facts (odbl)", variant = LightTextVariant.Detail)
                             }
                         }
 
