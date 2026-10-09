@@ -9,7 +9,7 @@ import com.thelightphone.sdk.ui.LightIcons
 import com.thelightphone.sdk.ui.LightTextInputEditor
 import com.zacksimpson.nourish.ui.NourishTheme
 
-/** Nutrition lookup entry point — a single full-screen search field. */
+/** search field for nutrition lookup. */
 class SearchScreen(sealedActivity: SealedLightActivity) : SimpleLightScreen<Unit>(sealedActivity) {
 
     @Composable

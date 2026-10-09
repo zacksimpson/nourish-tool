@@ -32,7 +32,7 @@ private const val SIGNAL_OPTION_GAP = 1.5f
 private const val FIELD_HORIZONTAL_PADDING = 1.75f
 private const val FIELD_VERTICAL_PADDING = 0.8f
 
-/** Shared meal-entry form — used by both the Log tab and entry detail's edit mode. */
+/** meal entry form, shared by the log tab and entry edit mode. */
 @Composable
 fun EntryForm(
     breakfast: String,

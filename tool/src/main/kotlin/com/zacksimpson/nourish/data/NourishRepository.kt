@@ -12,21 +12,20 @@ import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
 
-/** Snapshot of everything the app persists. */
+/** everything the app saves. */
 data class AppData(
     val entries: Map<String, Entry>,
     val signals: List<String>,
     val targets: Map<String, Int>,
 )
 
-/** Stored value exists but can't be parsed; left on disk untouched, not reset. */
+/** a saved value can't be parsed. it is left on disk as is. */
 class DataCorruptionException(key: String, cause: Throwable) :
     Exception("Stored data for '$key' is unreadable; it was preserved, not overwritten.", cause)
 
 /**
- * Single source of truth for persisted data, backed by the SDK's shared DataStore.
- * No in-memory cache — every mutation is one atomic edit(). A corrupt key throws
- * before any write, so bad data is never overwritten.
+ * all saved data, kept in the sdk datastore. each change is one atomic edit.
+ * a corrupt value throws before any write, so it never gets overwritten.
  */
 class NourishRepository(private val dataStore: DataStore<Preferences>) {
 
@@ -51,7 +50,7 @@ class NourishRepository(private val dataStore: DataStore<Preferences>) {
     private fun Preferences.readTargets(): Map<String, Int> =
         decode(this[TARGETS_KEY], TARGETS_KEY, targetsSerializer) ?: emptyMap()
 
-    /** Absent key → null (caller applies a default); present but unparseable → throw. */
+    /** missing returns null so the caller can default. unparseable throws. */
     private fun <T> decode(raw: String?, key: Preferences.Key<String>, serializer: KSerializer<T>): T? {
         if (raw == null) return null
         return try {

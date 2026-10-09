@@ -14,7 +14,7 @@ import com.thelightphone.sdk.ui.gridUnitsAsDp
 import com.zacksimpson.nourish.data.SignalRating
 import com.zacksimpson.nourish.ui.EntryForm
 
-/** Today's entry: date title, save action, and the shared entry form. */
+/** today's entry with a save button. */
 @Composable
 fun LogTab(
     dateLabel: String,
@@ -38,8 +38,7 @@ fun LogTab(
     Column(modifier = Modifier.fillMaxSize()) {
         LightTopBar(
             center = LightTopBarCenter.Text(dateLabel),
-            // ACCEPT's artwork fills its box edge-to-edge, unlike BACK's — sized down
-            // to match BACK's visual weight elsewhere in the app.
+            // the accept icon is drawn edge to edge, so shrink it to match back
             rightButton = LightBarButton.LightIcon(LightIcons.ACCEPT, onClick = onSave, sizeUnits = 1.5f),
             modifier = Modifier.padding(bottom = 1f.gridUnitsAsDp()),
         )

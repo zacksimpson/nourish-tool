@@ -30,7 +30,7 @@ import com.thelightphone.sdk.ui.gridUnitsAsDp
 import com.thelightphone.sdk.ui.lightClickable
 import com.zacksimpson.nourish.ui.NourishTheme
 
-/** How many servings of the looked-up food were eaten. Back returns no change. */
+/** picks how many servings were eaten. back keeps the old count. */
 class ServingCounterScreen(
     sealedActivity: SealedLightActivity,
     private val initialCount: Int,

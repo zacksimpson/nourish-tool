@@ -36,7 +36,7 @@ private const val ROW_HORIZONTAL_PADDING = 1.4f
 private const val ROW_VERTICAL_PADDING = 1f
 private const val MAX_SIGNALS = 3
 
-/** Settings pages share one screen and switch modes, so moving between them doesn't reload data. */
+/** settings pages are modes of one screen, so switching doesn't reload data. */
 sealed interface SettingsMode {
     data object Home : SettingsMode
     data object Signals : SettingsMode

@@ -12,7 +12,7 @@ android {
 
     signingConfigs {
         create("lightsdkDev") {
-            // Repo-local dev key lives in the light-sdk clone this module is built inside.
+            // dev key from the light-sdk checkout, cleared for official builds
             storeFile = rootProject.file("sdk/keys/lightsdk-dev.jks")
             storePassword = "android"
             keyAlias = "lightsdk-dev"
@@ -59,8 +59,7 @@ dependencies {
     implementation(project(":sdk:client"))
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.datastore.preferences)
-    // OpenFoodFacts nutrition lookup — no Firestore/auth needed here, just plain
-    // unauthenticated GETs (see utils/offApi.ts in the nourish-tool RN repo).
+    // plain http client for open food facts lookups
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.content.negotiation)

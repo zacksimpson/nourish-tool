@@ -12,7 +12,7 @@ enum class SignalRating {
 
 @Serializable
 data class Entry(
-    val date: String, // "YYYY-MM-DD"
+    val date: String, // yyyy-mm-dd
     val breakfast: String = "",
     val lunch: String = "",
     val dinner: String = "",

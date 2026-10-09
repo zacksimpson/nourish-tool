@@ -10,11 +10,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * Repositories and their live state, built once and reused for the app's whole
- * process lifetime. Each screen used to build its own repository and StateFlow on
- * every push, so every fresh navigation started cold and flashed blank for a frame
- * before its data arrived — sharing one already-warm instance means only the very
- * first screen ever sees that gap.
+ * one shared repository and state for the whole process, so new screens
+ * open with data already loaded instead of flashing blank.
  */
 object AppDataStore {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)

@@ -33,7 +33,7 @@ private const val LIST_TOP_PADDING = 0.25f
 private const val TAG_ROW_VERTICAL_PADDING = 0.65f
 private const val BOTTOM_PAD = 2.5f
 
-/** Multi-select context tags. Tap the back button to return the current selection. */
+/** pick context tags. the back button returns the selection. */
 class ContextPickerScreen(
     sealedActivity: SealedLightActivity,
     private val initialTags: List<String>,
