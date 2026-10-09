@@ -23,8 +23,6 @@ import com.thelightphone.sdk.ui.gridUnitsAsDp
 import com.thelightphone.sdk.ui.lightClickable
 import com.zacksimpson.nourish.DataState
 import com.zacksimpson.nourish.data.AppDataStore
-import com.zacksimpson.nourish.data.NotificationsRepository
-import com.zacksimpson.nourish.data.NotificationsSettings
 import com.zacksimpson.nourish.data.NourishRepository
 import com.zacksimpson.nourish.ui.DesignText
 import com.zacksimpson.nourish.ui.NourishTheme
@@ -37,57 +35,26 @@ private const val ROW_LABEL_SIZE_PX = 30f
 private const val ROW_DESCRIPTION_SIZE_PX = 16f
 private const val ROW_HORIZONTAL_PADDING_PX = 22f
 private const val ROW_VERTICAL_PADDING_PX = 16f
-private const val ROW_LABEL_DESCRIPTION_GAP_PX = 0f
 private const val MAX_SIGNALS = 3
 
-/** All settings screens are modes of this one — no navigateTo push between them, so
- *  there's no composition teardown/rebuild (and no data-reload flash) moving between
- *  them. Same shape as the weather example's single-screen mode switch. */
+/** Settings pages share one screen and switch modes, so moving between them doesn't reload data. */
 sealed interface SettingsMode {
     data object Home : SettingsMode
-    data object Notifications : SettingsMode
     data object Signals : SettingsMode
-    data class TimePicker(val initialValue: String?) : SettingsMode
 }
 
 class SettingsViewModel(
-    private val notificationsRepo: NotificationsRepository,
     private val nourishRepo: NourishRepository,
-    val notificationsSettings: StateFlow<NotificationsSettings>,
     val nourishState: StateFlow<DataState>,
 ) : LightViewModel<Unit>() {
     val mode = MutableStateFlow<SettingsMode>(SettingsMode.Home)
-
-    fun openNotifications() {
-        mode.value = SettingsMode.Notifications
-    }
 
     fun openSignals() {
         mode.value = SettingsMode.Signals
     }
 
-    fun openTimePicker() {
-        mode.value = SettingsMode.TimePicker(notificationsSettings.value.reminderTime)
-    }
-
     fun backToHome() {
         mode.value = SettingsMode.Home
-    }
-
-    fun backToNotifications() {
-        mode.value = SettingsMode.Notifications
-    }
-
-    fun setEnabled(v: Boolean) {
-        viewModelScope.launch { notificationsRepo.update { it.copy(enabled = v) } }
-    }
-
-    fun setReminderEnabled(v: Boolean) {
-        viewModelScope.launch { notificationsRepo.update { it.copy(reminderEnabled = v) } }
-    }
-
-    fun setReminderTime(time: String) {
-        viewModelScope.launch { notificationsRepo.update { it.copy(reminderTime = time) } }
     }
 
     fun toggleSignal(id: String) {
@@ -105,32 +72,18 @@ class SettingsScreen(sealedActivity: SealedLightActivity) :
         get() = SettingsViewModel::class.java
 
     override fun createViewModel() = SettingsViewModel(
-        AppDataStore.notificationsRepository(lightContext.dataStore),
         AppDataStore.nourishRepository(lightContext.dataStore),
-        AppDataStore.notificationsState(lightContext.dataStore),
         AppDataStore.nourishState(lightContext.dataStore),
     )
 
     @Composable
     override fun Content() {
         NourishTheme {
-            when (val mode = viewModel.mode.collectAsState().value) {
+            when (viewModel.mode.collectAsState().value) {
                 SettingsMode.Home -> SettingsHomeContent(
                     onBack = { goBack(Unit) },
-                    onOpenNotifications = { viewModel.openNotifications() },
                     onOpenSignals = { viewModel.openSignals() },
                 )
-
-                SettingsMode.Notifications -> {
-                    val settings by viewModel.notificationsSettings.collectAsState()
-                    NotificationsContent(
-                        settings = settings,
-                        onBack = { viewModel.backToHome() },
-                        onSetEnabled = { v -> viewModel.setEnabled(v) },
-                        onSetReminderEnabled = { v -> viewModel.setReminderEnabled(v) },
-                        onOpenTimePicker = { viewModel.openTimePicker() },
-                    )
-                }
 
                 SettingsMode.Signals -> {
                     val state by viewModel.nourishState.collectAsState()
@@ -143,15 +96,6 @@ class SettingsScreen(sealedActivity: SealedLightActivity) :
                         )
                     }
                 }
-
-                is SettingsMode.TimePicker -> TimePickerContent(
-                    initialValue = mode.initialValue,
-                    onConfirm = { time ->
-                        viewModel.setReminderTime(time)
-                        viewModel.backToNotifications()
-                    },
-                    onDismiss = { viewModel.backToNotifications() },
-                )
             }
         }
     }
@@ -160,7 +104,6 @@ class SettingsScreen(sealedActivity: SealedLightActivity) :
 @Composable
 private fun SettingsHomeContent(
     onBack: () -> Unit,
-    onOpenNotifications: () -> Unit,
     onOpenSignals: () -> Unit,
 ) {
     Column(
@@ -175,7 +118,6 @@ private fun SettingsHomeContent(
         )
 
         LightScrollView(modifier = Modifier.fillMaxSize()) {
-            SettingsRow(label = "Notifications", onClick = onOpenNotifications)
             SettingsRow(
                 label = "Nutrition Focus",
                 description = "choose up to three",
@@ -198,11 +140,7 @@ private fun SettingsRow(label: String, onClick: () -> Unit, description: String?
     ) {
         DesignText(text = label, fontSizeDesignPx = ROW_LABEL_SIZE_PX)
         if (description != null) {
-            DesignText(
-                text = description,
-                fontSizeDesignPx = ROW_DESCRIPTION_SIZE_PX,
-                modifier = Modifier.padding(top = ROW_LABEL_DESCRIPTION_GAP_PX.designPxToDp()),
-            )
+            DesignText(text = description, fontSizeDesignPx = ROW_DESCRIPTION_SIZE_PX)
         }
     }
 }
