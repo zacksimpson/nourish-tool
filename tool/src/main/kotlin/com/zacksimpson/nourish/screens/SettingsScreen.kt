@@ -1,15 +1,29 @@
 package com.zacksimpson.nourish.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.lifecycle.viewModelScope
 import com.thelightphone.sdk.LightScreen
 import com.thelightphone.sdk.LightViewModel
@@ -22,9 +36,11 @@ import com.thelightphone.sdk.ui.LightTextVariant
 import com.thelightphone.sdk.ui.LightThemeTokens
 import com.thelightphone.sdk.ui.LightTopBar
 import com.thelightphone.sdk.ui.LightTopBarCenter
+import com.thelightphone.sdk.ui.designVerticalPxToSp
 import com.thelightphone.sdk.ui.gridUnitsAsDp
 import com.thelightphone.sdk.ui.lightClickable
 import com.zacksimpson.nourish.DataState
+import com.zacksimpson.nourish.R
 import com.zacksimpson.nourish.data.AppDataStore
 import com.zacksimpson.nourish.data.NourishRepository
 import com.zacksimpson.nourish.ui.NourishTheme
@@ -32,15 +48,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-private const val ROW_HORIZONTAL_PADDING = 1.4f
-private const val ROW_VERTICAL_PADDING = 1f
 private const val MAX_SIGNALS = 3
 
 /** settings pages are modes of one screen, so switching doesn't reload data. */
 sealed interface SettingsMode {
     data object Home : SettingsMode
     data object Signals : SettingsMode
-    data object About : SettingsMode
+    data object Attribution : SettingsMode
 }
 
 class SettingsViewModel(
@@ -53,8 +67,8 @@ class SettingsViewModel(
         mode.value = SettingsMode.Signals
     }
 
-    fun openAbout() {
-        mode.value = SettingsMode.About
+    fun openAttribution() {
+        mode.value = SettingsMode.Attribution
     }
 
     fun backToHome() {
@@ -87,10 +101,10 @@ class SettingsScreen(sealedActivity: SealedLightActivity) :
                 SettingsMode.Home -> SettingsHomeContent(
                     onBack = { goBack(Unit) },
                     onOpenSignals = { viewModel.openSignals() },
-                    onOpenAbout = { viewModel.openAbout() },
+                    onOpenAttribution = { viewModel.openAttribution() },
                 )
 
-                SettingsMode.About -> AboutContent(onBack = { viewModel.backToHome() })
+                SettingsMode.Attribution -> AttributionContent(onBack = { viewModel.backToHome() })
 
                 SettingsMode.Signals -> {
                     val state by viewModel.nourishState.collectAsState()
@@ -112,7 +126,7 @@ class SettingsScreen(sealedActivity: SealedLightActivity) :
 private fun SettingsHomeContent(
     onBack: () -> Unit,
     onOpenSignals: () -> Unit,
-    onOpenAbout: () -> Unit,
+    onOpenAttribution: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -125,67 +139,96 @@ private fun SettingsHomeContent(
             modifier = Modifier.padding(bottom = 1f.gridUnitsAsDp()),
         )
 
-        LightScrollView(modifier = Modifier.fillMaxSize()) {
-            SettingsRow(
-                label = "Nutrition Focus",
-                description = "choose up to three",
-                onClick = onOpenSignals,
-            )
-            SettingsRow(label = "About", onClick = onOpenAbout)
+        LightScrollView(modifier = Modifier.weight(1f).fillMaxWidth()) {
+            SettingsRow(label = "Nutrition Focus", onClick = onOpenSignals)
         }
+
+        AttributionFooter(onClick = onOpenAttribution)
     }
 }
 
+/** a label row that opens another page. */
 @Composable
-private fun SettingsRow(label: String, onClick: () -> Unit, description: String? = null) {
-    Column(
+private fun SettingsRow(label: String, onClick: () -> Unit) {
+    LightText(
+        text = label,
+        variant = LightTextVariant.Heading,
         modifier = Modifier
             .fillMaxWidth()
             .lightClickable(onClick = onClick)
-            .padding(
-                horizontal = ROW_HORIZONTAL_PADDING.gridUnitsAsDp(),
-                vertical = ROW_VERTICAL_PADDING.gridUnitsAsDp(),
-            ),
+            .padding(start = 1.5f.gridUnitsAsDp(), top = 1f.gridUnitsAsDp(), bottom = 1f.gridUnitsAsDp()),
+    )
+}
+
+@Composable
+private fun AttributionFooter(onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(4f.gridUnitsAsDp())
+            .lightClickable(onClick = onClick)
+            .padding(horizontal = 1f.gridUnitsAsDp()),
+        contentAlignment = Alignment.Center,
     ) {
-        LightText(text = label, variant = LightTextVariant.Subheading)
-        if (description != null) {
-            LightText(text = description, variant = LightTextVariant.Detail)
+        Text(
+            text = buildAnnotatedString {
+                append("Food data provided by ")
+                withStyle(SpanStyle(textDecoration = TextDecoration.Underline)) {
+                    append("Open Food Facts")
+                }
+                append(".")
+            },
+            style = compactFineStyle(),
+            color = LightThemeTokens.colors.content,
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
+@Composable
+private fun AttributionContent(onBack: () -> Unit) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        LightTopBar(
+            leftButton = LightBarButton.LightIcon(LightIcons.BACK, onClick = onBack),
+            center = LightTopBarCenter.Text("Open Food Facts"),
+            modifier = Modifier.padding(bottom = 1f.gridUnitsAsDp()),
+        )
+
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 2f.gridUnitsAsDp()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Image(
+                painter = painterResource(R.drawable.openfoodfacts),
+                contentDescription = "Open Food Facts QR code",
+                modifier = Modifier
+                    .padding(top = 2f.gridUnitsAsDp())
+                    .size(12f.gridUnitsAsDp()),
+            )
+            Text(
+                text = "Open Food Facts is an open database of food products\n\n" +
+                    "Scan the QR code or visit:\n" +
+                    "https://world.openfoodfacts.org to learn more.\n\n" +
+                    "Nutrition lookup sends your searches to Open Food Facts. " +
+                    "Your logs stay on this phone.",
+                style = compactFineStyle(),
+                color = LightThemeTokens.colors.content,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 2f.gridUnitsAsDp()),
+            )
         }
     }
 }
 
 @Composable
-private fun AboutContent(onBack: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(LightThemeTokens.colors.background),
-    ) {
-        LightTopBar(
-            leftButton = LightBarButton.LightIcon(LightIcons.BACK, onClick = onBack),
-            center = LightTopBarCenter.Text("About"),
-            modifier = Modifier.padding(bottom = 1f.gridUnitsAsDp()),
-        )
-
-        LightScrollView(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier.padding(horizontal = ROW_HORIZONTAL_PADDING.gridUnitsAsDp()),
-                verticalArrangement = Arrangement.spacedBy(ROW_VERTICAL_PADDING.gridUnitsAsDp()),
-            ) {
-                LightText(
-                    text = "your logs stay on this phone. nothing is sent anywhere.",
-                    variant = LightTextVariant.Paragraph,
-                )
-                LightText(
-                    text = "nutrition lookup is the only online feature. the words you search for and the " +
-                        "foods you open are sent to open food facts, along with your ip address.",
-                    variant = LightTextVariant.Paragraph,
-                )
-                LightText(
-                    text = "food data comes from open food facts and is available under the open database license.",
-                    variant = LightTextVariant.Paragraph,
-                )
-            }
-        }
-    }
+private fun compactFineStyle(): TextStyle {
+    val base = LightThemeTokens.typography.fine
+    return base.copy(
+        fontSize = base.fontSize.value.designVerticalPxToSp(),
+        lineHeight = (base.fontSize.value * 1.2f).designVerticalPxToSp(),
+    )
 }
