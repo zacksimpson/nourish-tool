@@ -41,7 +41,7 @@ fun UnderlinedField(
         }
         LightText(
             text = value.ifBlank { placeholder },
-            variant = LightTextVariant.Paragraph,
+            variant = LightTextVariant.Subheading,
         )
         Spacer(modifier = Modifier.height(VALUE_TO_UNDERLINE_GAP.gridUnitsAsDp()))
         Spacer(

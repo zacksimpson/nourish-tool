@@ -343,6 +343,6 @@ private fun ReadOnlyField(label: String, value: String) {
     ) {
         LightText(text = label, variant = LightTextVariant.Detail)
         Spacer(modifier = Modifier.height(0.4f.gridUnitsAsDp()))
-        LightText(text = value, variant = LightTextVariant.Paragraph)
+        LightText(text = value, variant = LightTextVariant.Subheading)
     }
 }

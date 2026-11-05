@@ -61,7 +61,7 @@ class ContextPickerScreen(
                     ALL_TAGS.forEach { tag ->
                         LightText(
                             text = tag.label,
-                            variant = LightTextVariant.Paragraph,
+                            variant = LightTextVariant.Subheading,
                             underline = tag.id in selected,
                             modifier = Modifier
                                 .fillMaxWidth()
